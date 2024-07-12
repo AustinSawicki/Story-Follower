@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import CharacterDelete from './utils/CharacterDelete';
 import api from '../api';
+import { PLACEHOLDER_URL } from '../constants';
 
 function CharacterPopup({ storyId, character, onClose, onUpdate }) {
     const [inputs, setInputs] = useState({
@@ -82,7 +83,7 @@ function CharacterPopup({ storyId, character, onClose, onUpdate }) {
                         {inputs.image ? (
                             <img src={inputs.image} alt="Character" className="w-full h-full object-cover rounded-xl" />
                         ) : (
-                            <img src={`${import.meta.env.VITE_API_URL}static/placeholder/placehold-character.jpg`} alt="Character" className="w-full h-full object-cover rounded-xl" />
+                            <img src={`${PLACEHOLDER_URL}placehold-character.jpg`} alt="Character" className="w-full h-full object-cover rounded-xl" />
                         )}
                     </div>
                     <div className="flex justify-center text-sm mt-2 mb-3">

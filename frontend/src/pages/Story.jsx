@@ -4,7 +4,8 @@ import Settings from '../components/Settings';
 import CharacterCard from '../components/CharacterCard';
 import Chapter from '../components/Chapter';
 import Popup from '../components/Popup';
-import { StoryGet,StoryUpdate, StoryDelete, CharactersGet, CharacterCreate, ChaptersGet, ChapterCreate, DescriptionGet ,DescriptionUpdate } from '../components/utils/index';
+import { StoryGet,StoryUpdate, StoryDelete, CharactersGet, CharacterCreate, ChaptersGet, ChapterCreate, DescriptionGet } from '../components/utils/index';
+import { PLACEHOLDER_URL } from '../constants';
 
 function Story() {
     const { id } = useParams();
@@ -40,12 +41,12 @@ function Story() {
         <div>
             <div>
                 <div className="flex justify-between items-center relative max-h-256" 
-                     style={{ backgroundImage: `url('${story.banner ? story.banner : `${import.meta.env.VITE_API_URL}static/placeholder/placehold-banner.jpg`}')`, backgroundSize: 'cover', backgroundPosition: 'center'  }}>
+                     style={{ backgroundImage: `url('${story.banner ? story.banner : `${PLACEHOLDER_URL}placehold-banner.jpg`}')`, backgroundSize: 'cover', backgroundPosition: 'center'  }}>
                         <div className="w-1/2 flex justify-center items-center p-4">
                             {story.image ? (
                                 <img src={story.image} alt="Story" className="max-h-96 w-full h-full p-4 object-contain rounded-xl" />
                             ) : (
-                                <img src={`${import.meta.env.VITE_API_URL}static/placeholder/placehold-image.JPG`} alt="Story" className="max-h-96 w-full h-full p-4 object-contain rounded-xl" />
+                                <img src={`${PLACEHOLDER_URL}placehold-image.JPG`} alt="Story" className="max-h-96 w-full h-full p-4 object-contain rounded-xl" />
                             )}
                             <Settings openPopup={openPopup} size={"3xl"}/>
                         </div>

@@ -14,11 +14,9 @@ import CharacterCreate from "./CharacterCreate";
 import DescriptionGet from "./DescriptionGet";
 import DescriptionUpdate from "./DescriptionUpdate";
 import ImageUpload from "./ImageUpload";
-import StoryBannerGet from "./StoryBannerGet";
 
 export {StoryGet,
         StoriesGet,
-        StoryBannerGet,
         StoryCreate,
         StoryUpdate,
         StoryDelete,

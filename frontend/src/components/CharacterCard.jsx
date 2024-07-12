@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import Settings from './Settings';
 import api from '../api';
-import Popup from './Popup';
 import CharacterPopup from './CharacterPopup';
-import CharacterDelete from './utils/CharacterDelete';
-import CharacterUpdate from './utils/CharacterUpdate';
+import { PLACEHOLDER_URL } from '../constants';
 
 function CharacterCard({ storyId, character, onUpdate }) {
     const [showPopup, setShowPopup] = useState(false);
@@ -53,7 +51,7 @@ function CharacterCard({ storyId, character, onUpdate }) {
                 {character.image ? (
                     <img src={character.image} alt="Character" className="w-full h-full object-cover rounded-xl" />
                 ) : (
-                    <img src={`${import.meta.env.VITE_API_URL}static/placeholder/placehold-character.jpg`} alt="Character" className="w-full h-full object-cover rounded-xl" />
+                    <img src={`${PLACEHOLDER_URL}placehold-character.jpg`} alt="Character" className="w-full h-full object-cover rounded-xl" />
                 )}
             </div>
             <div className="flex justify-center text-sm mt--2 mb-3">
