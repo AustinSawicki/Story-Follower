@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "api",
     "rest_framework",
     "corsheaders",
+    "storages"
 ]
 
 MIDDLEWARE = [
@@ -116,14 +117,30 @@ elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
     }
 
 
+if DEVELOPMENT_MODE is True:
+    STATIC_URL = '/static/'
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static'
+    ]
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+else:
+    AWS_S3_ACCESS_KEY_ID = os.getenv("AWS_S3_ACCESS_KEY_ID")
+    AWS_S3_SECRET_ACCESS_KEY = os.getenv("AWS_S3_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+    AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME")
+    AWS_S3_ENDPOINT_URL = f"https://{AWS_S3_REGION_NAME}.digitaloceanspaces.com"
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=8640'
+    }
+    AWS_DEFAULT_ACL = "public-read"
+    AWS_LOCATION = "static"
+    STORAGES = { 
+    "default": {"BACKEND": "storages.backends.s3.S3Storage",},
+    "staticfiles": {"BACKEND": "storages.backends.s3.S3Storage"}
+}
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static'
-]
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
