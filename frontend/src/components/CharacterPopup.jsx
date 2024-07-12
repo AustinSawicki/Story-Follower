@@ -82,7 +82,7 @@ function CharacterPopup({ storyId, character, onClose, onUpdate }) {
                         {inputs.image ? (
                             <img src={inputs.image} alt="Character" className="w-full h-full object-cover rounded-xl" />
                         ) : (
-                            <img src={`${import.meta.env.VITE_API_URL}media/placeholder/placehold-character.jpg`} alt="Character" className="w-full h-full object-cover rounded-xl" />
+                            <img src={`${import.meta.env.VITE_API_URL}static/placeholder/placehold-character.jpg`} alt="Character" className="w-full h-full object-cover rounded-xl" />
                         )}
                     </div>
                     <div className="flex justify-center text-sm mt-2 mb-3">

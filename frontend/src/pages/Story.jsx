@@ -40,12 +40,12 @@ function Story() {
         <div>
             <div>
                 <div className="flex justify-between items-center relative max-h-256" 
-                     style={{ backgroundImage: `url('${story.banner ? story.banner : `${import.meta.env.VITE_API_URL}media/placeholder/placehold-banner.jpg`}')`, backgroundSize: 'cover', backgroundPosition: 'center'  }}>
+                     style={{ backgroundImage: `url('${story.banner ? story.banner : `${import.meta.env.VITE_API_URL}static/placeholder/placehold-banner.jpg`}')`, backgroundSize: 'cover', backgroundPosition: 'center'  }}>
                         <div className="w-1/2 flex justify-center items-center p-4">
                             {story.image ? (
                                 <img src={story.image} alt="Story" className="max-h-96 w-full h-full p-4 object-contain rounded-xl" />
                             ) : (
-                                <img src={`${import.meta.env.VITE_API_URL}media/placeholder/placehold-image.JPG`} alt="Story" className="max-h-96 w-full h-full p-4 object-contain rounded-xl" />
+                                <img src={`${import.meta.env.VITE_API_URL}static/placeholder/placehold-image.JPG`} alt="Story" className="max-h-96 w-full h-full p-4 object-contain rounded-xl" />
                             )}
                             <Settings openPopup={openPopup} size={"3xl"}/>
                         </div>
