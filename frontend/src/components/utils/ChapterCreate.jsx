@@ -6,7 +6,6 @@ function ChapterCreate({e, id, setChapters, data}) {
         api.post(`/api/stories/${id}/chapters/`, data)
         .then((res) => {
             if (res.status === 201) {
-                console.log("Chapter created!");
                 ChaptersGet({id, setChapters});
             } else {
                 alert("Failed to create chapter.");

@@ -4,7 +4,6 @@ function UserUpdate({updateData}) {
     api.patch(`/api/users/me`, updateData)
     .then((res) => {
         if (res.status === 200) {
-            console.log('User updated!');
         } else {
             console.log('Failed to update user.');
         }

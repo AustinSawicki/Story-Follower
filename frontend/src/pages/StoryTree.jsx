@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import ReactFlow, {
     Controls,
     Background,
@@ -10,8 +9,7 @@ import ReactFlow, {
     ReactFlowProvider
   } from 'react-flow-renderer';
 import api from '../api';
-import ChapterUpdate from '../components/utils/ChapterUpdate';
-import ChapterDelete from '../components/utils/ChapterDelete';
+import { ChaptersGet, StoryGet, ChapterUpdate, ChapterDelete } from '../components/utils';
 import Popup from '../components/Popup'; 
 import { useTheme } from '../components/ThemeProvider';
 
@@ -26,8 +24,8 @@ function StoryTree() {
     const [selectedChapter, setSelectedChapter] = useState(null);
 
     useEffect(() => {
-        getStory()
-        getChapters();
+        StoryGet({id, setStory});
+        ChaptersGet({id, setChapters});
     }, [id]);
 
     useEffect(() => {
@@ -36,53 +34,39 @@ function StoryTree() {
         }
     }, [chapters]);
 
-
     useEffect(() => {
-        if(story && story.theme) {
+        if (story && story.theme) {
             updateTheme(story.theme);
         }
     }, [story]);
 
-    const getStory = () => {
-        api.get(`/api/stories/${id}`)
-            .then((res) => res.data)
-            .then((data) => {
-                setStory(data);
-                console.log(story)
-            })
-            .catch((err) => alert(err));
-    };
-
-    const getChapters = () => {
-        api.get(`/api/stories/${id}/chapters/`)
-            .then((res) => res.data)
-            .then((data) => {
-                setChapters(data);
-            })
-            .catch((err) => alert(err));
-    };
-
-
     const getNodes = () => {
-        const nodes = chapters.map((chapter, index) => ({
-            id: chapter.id.toString(),
-            data: {
-                label: (
-                    <div className="relative">
-                        <p className="font-bold">{chapter.title}</p>
-                        <p>{chapter.description}</p>
-                        <button
-                            onClick={() => openPopup(chapter)}
-                            className="absolute top-0 right-0 bg-transparent border-none cursor-pointer text-gray-600 hover:text-gray-800 font-bold"
-                        >
-                            ⋮
-                        </button>
-                    </div>
-                ),
-                description: chapter.description,
-            },
-            position: { x: index * 200, y: index * 100 },
-        }));
+        const nodes = chapters.map((chapter, index) => {
+            let position = { x: index * 200, y: index * 100 };
+            if (index > 0) {
+                const prevChapter = chapters[index - 1];
+                position = { x: (prevChapter.x || 0) + 200, y: (prevChapter.y || 0) + 100 };
+            }
+            return {
+                id: chapter.id.toString(),
+                data: {
+                    label: (
+                        <div className="relative">
+                            <p className="font-bold overflow-hidden text-ellipsis whitespace-nowrap">{chapter.title}</p>
+                            <p>{chapter.short_description}</p>
+                            <button
+                                onClick={() => openPopup(chapter)}
+                                className="absolute top-0 right-0 bg-transparent border-none cursor-pointer text-gray-600 hover:text-gray-800 font-bold"
+                            >
+                                ⋮
+                            </button>
+                        </div>
+                    ),
+                    description: chapter.short_description,
+                },
+                position: { x: chapter.x || position.x, y: chapter.y || position.y },
+            };
+        });
 
         setNodes(nodes);
 
@@ -94,7 +78,6 @@ function StoryTree() {
         }));
 
         setEdges(edges);
-
     };
 
     const openPopup = (chapter) => {
@@ -105,12 +88,12 @@ function StoryTree() {
     const closePopup = () => {
         setShowPopup(false);
         setSelectedChapter(null);
-        getChapters();
+        ChaptersGet({id, setChapters});
     };
+
     const onNodeDragStop = (event, node) => {
-        console.log('Node dragged to:', node.position);
-        // Optionally, you can update the node position in your backend or state here
-      };
+        ChapterUpdate({ ids: [id, node.id], updateData: { x: node.position.x, y: node.position.y } });
+    };
 
     return (
         <div className="relative h-[600px]">
@@ -129,9 +112,10 @@ function StoryTree() {
             {showPopup && selectedChapter && (
                 <Popup
                     ids={[id, selectedChapter.id]}
+                    name={selectedChapter.title}
                     config={[
                         { "Title": selectedChapter.title },
-                        { "Description": selectedChapter.description }
+                        { "Short_description": selectedChapter.short_description }
                     ]}
                     onClose={closePopup}
                     onUpdate={ChapterUpdate}

@@ -9,6 +9,14 @@ function Popup({ ids, name, config, onClose, onUpdate, onDelete, imageChange = f
 
     const themes = Object.keys(themesDictionary)
 
+    const formatKey = (key) => {
+        return key
+            .split('_')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    };
+
+
     const handleInputChange = (key, value) => {
         const newInputs = inputs.map(input => 
             input.hasOwnProperty(key) ? { [key]: value } : input
@@ -80,12 +88,21 @@ function Popup({ ids, name, config, onClose, onUpdate, onDelete, imageChange = f
                         return (
                             <div key={index} className="mb-4 flex items-center">
                                  <label className={`font-semibold mr-2 min-w-[100px]`}>
-                                    {key}
+                                    {formatKey(key)}
                                 </label>
-                                {key.toLowerCase() === "description" ? (
+                                {key.toLowerCase() === "description"? (
                                     <textarea
                                         className="p-1 rounded-md bg-transparent text-sm w-3/4 focus:ring-0 focus:outline-none focus:border-button focus:border-2 shadow-inner-dark custom-scrollbar"
-                                        value={value}
+                                        value={value || ""}
+                                        maxLength="5000"
+                                        onChange={(e) => handleInputChange(key, e.target.value)}
+                                        rows="4"
+                                    />
+                                ) : key.toLowerCase() === "short_description"? (
+                                    <textarea
+                                        className="p-1 rounded-md bg-transparent text-sm w-3/4 focus:ring-0 focus:outline-none focus:border-button focus:border-2 shadow-inner-dark custom-scrollbar"
+                                        value={value || ""}
+                                        maxLength="125"
                                         onChange={(e) => handleInputChange(key, e.target.value)}
                                         rows="4"
                                     />
@@ -93,13 +110,23 @@ function Popup({ ids, name, config, onClose, onUpdate, onDelete, imageChange = f
                                     <select
                                         value={value}
                                         onChange={(e) => handleInputChange(key, e.target.value)}
-                                        className="bg-button text-white mt-1 block w-full px-3 py-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-button-dark focus:border-button-dark sm:text-sm"
+                                        className="bg-button text-white mt-1 block w-full px-3 py-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-2 focus:ring-button-dark focus:border-button-dark sm:text-sm"
                                     >
                                         {themes.map((t) => (
                                             <option key={t} value={t}>{t}</option>
                                         ))}
                                     </select>
-                                ) : (
+                                ) : key.toLowerCase() === "title" ?
+                                (
+                                    <input
+                                        type="text"
+                                        className="p-1 rounded-md bg-transparent w-3/4 focus:ring-0 focus:outline-none focus:border-button focus:border-2 shadow-inner-dark"
+                                        value={value}
+                                        maxLength="30"
+                                        onChange={(e) => handleInputChange(key, e.target.value)}
+                                    />
+                                )
+                                : (
                                     <input
                                         type="text"
                                         className="p-1 rounded-md bg-transparent w-3/4 focus:ring-0 focus:outline-none focus:border-button focus:border-2 shadow-inner-dark"

@@ -14,7 +14,6 @@ function CharacterPopup({ storyId, character, onClose, onUpdate }) {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        console.log(name, value)
         setInputs({ ...inputs, [name]: value });
     };
 
@@ -37,7 +36,6 @@ function CharacterPopup({ storyId, character, onClose, onUpdate }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("submiting")
         const { name, group, description } = inputs;
 
         Promise.all([
@@ -46,7 +44,6 @@ function CharacterPopup({ storyId, character, onClose, onUpdate }) {
         ])
         .then((responses) => {
             if (responses[0].status === 200) {
-                console.log("Character updated!");
                 onUpdate();
                 onClose();
             } else {

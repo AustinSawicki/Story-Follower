@@ -105,7 +105,7 @@ function Story() {
                             <div className="flex items-center">
                                 <h2 className="text-3xl font-bold">Chapters</h2>
                                 <button
-                                    onClick={(e) => {ChapterCreate({e, id, setChapters, data: {title: "Title", description: "Description..."}})}}
+                                    onClick={(e) => {ChapterCreate({e, id, setChapters, data: {title: "Title", description: ""}})}}
                                     className="ml-5 bg-button text-white p-2 rounded hover:bg-button-dark transition-colors duration-300"
                                 >
                                     Create Chapter

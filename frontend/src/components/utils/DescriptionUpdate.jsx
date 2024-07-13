@@ -5,7 +5,6 @@ function DescriptionUpdate({e, id, description}) {
     api.patch(`/api/stories/${id}/update/`, { "about": description })
         .then((res) => {
             if (res.status === 200) {
-                console.log("Description updated!");
             } else {
                 console.log("Failed to update description.");
             }

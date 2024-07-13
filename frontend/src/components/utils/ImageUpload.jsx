@@ -10,9 +10,7 @@ const ImageUpload = async ({url, name, image}) => {
         }
     })
     .then((res) => {
-        if (res.status === 200) {
-            console.log(`${name} updated!`);
-        } else {
+        if (res.status !== 200) {
             console.log("Failed to update image.");
         }
     })

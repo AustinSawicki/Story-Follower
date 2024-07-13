@@ -29,7 +29,7 @@ function Chapter({ storyId, chapter, onUpdate }) {
     };
 
     return (
-        <div className="border p-4 w-full relative bg-theme-dark rounded-xl mt-3">
+        <div className="p-4 w-full relative bg-theme-dark rounded-xl mt-3">
             <Settings openPopup={openPopup} size={"2xl"}/>
             <div className="mb-2">
                 <strong>{chapter.title}</strong>

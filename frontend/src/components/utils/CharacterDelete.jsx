@@ -4,7 +4,6 @@ function CharacterDelete({ids, onClose}) {
     api.delete(`/api/stories/${ids[0]}/characters/${ids[1]}/delete/`)
             .then((res) => {
                 if (res.status === 204) {
-                    console.log('Character deleted!');
                     onClose(); // Close the popup on success
                 } else {
                     console.log('Failed to delete character.');

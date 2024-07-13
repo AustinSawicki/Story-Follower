@@ -10,7 +10,6 @@ function CharacterCreate({e, id, setCharacters}) {
         })
         .then((res) => {
             if (res.status === 201) {
-                console.log("Character created!");
                 CharactersGet({id, setCharacters});
             } else {
                 alert("Failed to create character.");

@@ -1,9 +1,9 @@
 export const autumn = {
-    theme_default: "#CD853F", // Peru
-    theme_dark: "#8B4513", // Saddle Brown
-    button_default: "#A0522D", // Sienna
-    button_dark: "#8B4513", // Saddle Brown
-    text_color: "#ffffff" // Black text for contrast
+    theme_default: "#DEB887", 
+    theme_dark: "#CD853F", 
+    button_default: "#A0522D", 
+    button_dark: "#8B4513", 
+    text_color: "#000000"
 };
 
 export const beige = {
@@ -55,18 +55,18 @@ export const midnight = {
 };
 
 export const ocean = {
-    theme_default: "#b0e0e6", // Light Blue
-    theme_dark: "#4682b4", // Steel Blue
-    button_default: "#5f9ea0", // Cadet Blue
-    button_dark: "#2e8b57", // Sea Green
-    text_color: "#000000" // Black text for contrast
+    theme_default: "#b0e0e6", 
+    theme_dark: "#4682b4", 
+    button_default: "#5f9ea0", 
+    button_dark: "#2e8b57", 
+    text_color: "#000000" 
 };
 
 export const silver = {
     theme_default: "#c0c0c0",
     theme_dark: "#a9a9a9",
-    button_default: "#b0b0b0",
-    button_dark: "#808080",
+    button_default: "#888888", 
+    button_dark: "#444444", 
     text_color: "#000000"
 };
 
@@ -79,11 +79,11 @@ export const sunset = {
 };
 
 export const winter = {
-    theme_default: "#B0E0E6", // Powder Blue
-    theme_dark: "#4682B4", // Steel Blue
-    button_default: "#5F9EA0", // Cadet Blue
-    button_dark: "#1C6EA4", // Blue Sapphire
-    text_color: "#000000" // Black text for contrast
+    theme_default: "#B0E0E6",
+    theme_dark: "#4682B4",
+    button_default: "#5F9EA0",
+    button_dark: "#1C6EA4",
+    text_color: "#000000" 
 };
 
 export const themesDictionary = {
