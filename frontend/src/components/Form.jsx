@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
@@ -16,8 +16,15 @@ function Form({ route, method }) {
 
     const name = method === "login" ? "Login" : "Register";
 
+    useEffect(() => {
+        setError(null)
+      }, [usernameError, passwordError]);
+
     const handleSubmit = async (e) => {
         setLoading(true);
+        setError(null)
+        setUsernameError(null)
+        setPasswordError(null)
         e.preventDefault();
 
         try {
@@ -30,13 +37,16 @@ function Form({ route, method }) {
                 navigate("/login")
             }
         } catch (error) {
-            if(error.response?.data?.username){
-                setUsernameError(error.response?.data?.username)
+            // Error messages are formated differently for login vs register, these matches are for login error messages
+            const usernameMatch =  error.response?.data?.error?.match(/'username': \[ErrorDetail\(string='(.*?)', code='.*?'\)\]/)
+            const passwordMatch = error.response?.data?.error?.match(/'password': \[ErrorDetail\(string='(.*?)', code='.*?'\)\]/);
+            if(error.response?.data?.username || usernameMatch){
+                setUsernameError(error.response?.data?.username || usernameMatch[1])
             }
-            else if(error.response?.data?.password) {
-                setPasswordError(error.response?.data?.password)
+            if(error.response?.data?.password || passwordMatch) {
+                setPasswordError(error.response?.data?.password || passwordMatch[1])
             }
-            else{
+            if (!usernameError && !passwordError){
                 setError(error.response?.data?.error || "An error occurred. Re-enter you username and password");
             }
             
