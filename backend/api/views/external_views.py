@@ -4,15 +4,13 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from ..models import Chapter
 from ..serializers.story_serializers import ChapterSerializer
-from dotenv import load_dotenv
-import os
+from django.conf import settings
 
-load_dotenv()
 
 client = OpenAI(
-  api_key = os.getenv('OPENAI_API_KEY'),
-  organization = os.getenv('OPENAI_ORGANIZATION'),
-  project = os.getenv('OPENAI_PROJECT'),
+  api_key = settings.OPENAI_API_KEY,
+  organization = settings.OPENAI_ORGANIZATION,
+  project = settings.OPENAI_PROJECT,
 )
 
 @api_view(['PUT'])
