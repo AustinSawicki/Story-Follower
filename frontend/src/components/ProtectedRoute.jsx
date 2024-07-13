@@ -3,7 +3,8 @@ import { jwtDecode } from "jwt-decode";
 import api from "../api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../constants";
 import { useState, useEffect } from "react";
-
+import SyncLoader from "react-spinners/SyncLoader";
+import ThemeProvider from "./ThemeProvider";
 
 function ProtectedRoute({ children }) {
     const [isAuthorized, setIsAuthorized] = useState(null);
@@ -48,7 +49,10 @@ function ProtectedRoute({ children }) {
     };
 
     if (isAuthorized === null) {
-        return <div>Loading...</div>;
+        return (
+        <div className="mb-5 mt-5">
+            <SyncLoader color="#cd7f4f"/>
+        </div>)
     }
 
     return isAuthorized ? children : <Navigate to="/login" />;

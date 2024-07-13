@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+
 export default {
   content: [
     "./index.html",
@@ -6,12 +7,17 @@ export default {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        'inner-dark': 'inset 0 2px 4px rgba(0, 0, 0, 0.2)', // Customize the shadow values as needed
+      },
       colors: {
-        beige: '#f5f5dc', // Custom beige color
-        dark_beige: '#e5e5c2',
-      oak: {
-        DEFAULT: '#cd7f4f', // Primary oak color
-        dark: '#a0522d',    // Darker shade for hover states
+        theme: {
+          DEFAULT: 'var(--theme-default)',
+          dark: 'var(--theme-dark)',
+        }, 
+        button: {
+          DEFAULT: 'var(--button-default)', 
+          dark: 'var(--button-dark)',    
       }
     },
     height: {

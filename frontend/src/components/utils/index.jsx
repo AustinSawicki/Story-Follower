@@ -14,6 +14,10 @@ import CharacterCreate from "./CharacterCreate";
 import DescriptionGet from "./DescriptionGet";
 import DescriptionUpdate from "./DescriptionUpdate";
 import ImageUpload from "./ImageUpload";
+import UserGet from "./UserGet";
+import UsernameReset from "./UsernameReset";
+import PasswordReset from "./PasswordReset";
+import UserThemeUpdate from "./UserThemeUpdate";
 
 export {StoryGet,
         StoriesGet,
@@ -30,4 +34,8 @@ export {StoryGet,
         ChapterDelete,
         DescriptionGet,
         DescriptionUpdate,
-        ImageUpload };
+        ImageUpload ,
+        UserGet,
+        UserThemeUpdate,
+        UsernameReset,
+        PasswordReset};

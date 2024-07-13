@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Settings from './Settings';
 import Popup from './Popup';
 import ChapterDelete from './utils/ChapterDelete';
@@ -6,6 +6,18 @@ import ChapterUpdate from './utils/ChapterUpdate';
 
 function Chapter({ storyId, chapter, onUpdate }) {
     const [showPopup, setShowPopup] = useState(false);
+
+    useEffect(() => {
+        if (showPopup) {
+            document.body.classList.add('no-scroll');
+        } else {
+            document.body.classList.remove('no-scroll');
+        }
+
+        return () => {
+            document.body.classList.remove('no-scroll');
+        };
+    }, [showPopup]);
 
     const openPopup = () => {
         setShowPopup(true);
@@ -17,7 +29,7 @@ function Chapter({ storyId, chapter, onUpdate }) {
     };
 
     return (
-        <div className="border p-4 w-full relative bg-dark_beige rounded-xl mt-3">
+        <div className="border p-4 w-full relative bg-theme-dark rounded-xl mt-3">
             <Settings openPopup={openPopup} size={"2xl"}/>
             <div className="mb-2">
                 <strong>{chapter.title}</strong>

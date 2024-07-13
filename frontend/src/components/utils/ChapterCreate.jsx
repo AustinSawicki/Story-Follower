@@ -1,9 +1,9 @@
 import api from "../../api";
 import ChaptersGet from "./ChaptersGet";
 
-function ChapterCreate({e, id, setChapters}) {
+function ChapterCreate({e, id, setChapters, data}) {
     e.preventDefault();
-        api.post(`/api/stories/${id}/chapters/`, {})
+        api.post(`/api/stories/${id}/chapters/`, data)
         .then((res) => {
             if (res.status === 201) {
                 console.log("Chapter created!");

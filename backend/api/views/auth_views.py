@@ -1,19 +1,19 @@
 from django.shortcuts import render
-from django.contrib.auth.models import User
+from ..models import CustomUser
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics, status
 from rest_framework.response import Response
-from ..serializers.auth_serializers import UserSerializer
+from ..serializers.auth_serializers import UserSerializer, UpdatePasswordSerializer, UpdateUsernameSerializer, UpdateThemeSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 class CreateUserView(generics.CreateAPIView):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
 
 class UserDetailView(generics.RetrieveAPIView):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
@@ -34,3 +34,27 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(serializer.validated_data, status=status.HTTP_200_OK)    
+    
+class UpdatePasswordView(generics.UpdateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UpdatePasswordSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+class UpdateUsernameView(generics.UpdateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UpdateUsernameSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+    
+class UpdateThemeView(generics.UpdateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UpdateThemeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user

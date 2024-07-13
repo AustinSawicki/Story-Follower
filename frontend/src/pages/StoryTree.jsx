@@ -13,9 +13,11 @@ import api from '../api';
 import ChapterUpdate from '../components/utils/ChapterUpdate';
 import ChapterDelete from '../components/utils/ChapterDelete';
 import Popup from '../components/Popup'; 
+import { useTheme } from '../components/ThemeProvider';
 
 function StoryTree() {
     const { id } = useParams();
+    const { updateTheme } = useTheme();
     const [story, setStory] = useState({});
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -33,6 +35,13 @@ function StoryTree() {
             getNodes();
         }
     }, [chapters]);
+
+
+    useEffect(() => {
+        if(story && story.theme) {
+            updateTheme(story.theme);
+        }
+    }, [story]);
 
     const getStory = () => {
         api.get(`/api/stories/${id}`)
@@ -105,16 +114,13 @@ function StoryTree() {
 
     return (
         <div className="relative h-[600px]">
-            <Link to={`/stories/${id}`} className="text-m font-bold p-5">
-                    ← {story.title}
-            </Link>
             <ReactFlow
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onNodeDragStop={onNodeDragStop}
-            className="bg-[#e5e5c2]"
+            className="bg-theme-dark"
             fitView
             >
                 <Controls />

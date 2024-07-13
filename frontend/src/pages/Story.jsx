@@ -4,13 +4,16 @@ import Settings from '../components/Settings';
 import CharacterCard from '../components/CharacterCard';
 import Chapter from '../components/Chapter';
 import Popup from '../components/Popup';
-import { StoryGet,StoryUpdate, StoryDelete, CharactersGet, CharacterCreate, ChaptersGet, ChapterCreate, DescriptionGet } from '../components/utils/index';
+import { StoryGet,StoryUpdate, StoryDelete, CharactersGet, CharacterCreate, ChaptersGet, ChapterCreate } from '../components/utils/index';
 import { PLACEHOLDER_URL } from '../constants';
+import SyncLoader from 'react-spinners/SyncLoader';
+import { useTheme } from '../components/ThemeProvider';
+
 
 function Story() {
     const { id } = useParams();
+    const { updateTheme } = useTheme();
     const [story, setStory] = useState(null);
-    const [description, setDescription] = useState("");
     const [characters, setCharacters] = useState([]);
     const [chapters, setChapters] = useState([]);
     const [showPopup, setShowPopup] = useState(false);
@@ -19,8 +22,26 @@ function Story() {
         StoryGet({id, setStory});
         CharactersGet({id, setCharacters})
         ChaptersGet({id, setChapters})
-        DescriptionGet({id, setDescription})
     }, [id]);
+
+    useEffect(() => {
+        if(story){
+            updateTheme(story.theme);
+        }
+    }, [story]);
+
+
+    useEffect(() => {
+        if (showPopup) {
+            document.body.classList.add('no-scroll');
+        } else {
+            document.body.classList.remove('no-scroll');
+        }
+
+        return () => {
+            document.body.classList.remove('no-scroll');
+        };
+    }, [showPopup]);
 
     const openPopup = () => {
         setShowPopup(true);
@@ -29,12 +50,13 @@ function Story() {
     const closePopup = () => {
         setShowPopup(false);
         StoryGet({id, setStory});
-        console.log(story)
-        DescriptionGet({id, setDescription})
     };
 
     if (!story) {
-        return <div>Loading...</div>;
+        return (
+            <div className="mb-5 mt-5">
+                <SyncLoader color="#cd7f4f"/>
+            </div>)
     }
 
     return (
@@ -46,26 +68,26 @@ function Story() {
                             {story.image ? (
                                 <img src={story.image} alt="Story" className="max-h-96 w-full h-full p-4 object-contain rounded-xl" />
                             ) : (
-                                <img src={`${PLACEHOLDER_URL}placehold-image.JPG`} alt="Story" className="max-h-96 w-full h-full p-4 object-contain rounded-xl" />
+                                <img src={`${PLACEHOLDER_URL}placehold-image.jpg`} alt="Story" className="max-h-96 w-full h-full p-4 object-contain rounded-xl" />
                             )}
                             <Settings openPopup={openPopup} size={"3xl"}/>
                         </div>
                         <div className="text-center w-1/2 p-4 rounded">
                             <h1 className="text-5xl font-bold mb-4 text-white description-border">{story.title}</h1>
                             <textarea
-                                className="w-full h-80 p-2 text-xl rounded resize-none bg-transparent description-border text-white"
-                                value={story.description}
+                                className="w-full h-80 p-2 text-xl rounded resize-none bg-transparent description-border text-white custom-scrollbar"
+                                value={story.description || ""}
                                 disabled
-                                placeholder="Enter description..."
+                                placeholder=""
                             />
                         </div>
                     </div>
-                    <div className="mb-4 p-4 rounded-xl bg-beige">
+                    <div className="mb-4 p-4 rounded-xl bg-theme">
                         <div className="flex items-center mb-4">
                             <h2 className="text-3xl font-bold">Characters</h2>
                             <button
                                 onClick={(e) => CharacterCreate({e, id, setCharacters})}
-                                className="ml-5 bg-oak text-white p-2 rounded hover:bg-oak-dark transition-colors duration-300"
+                                className="ml-5 bg-button text-white p-2 rounded hover:bg-button-dark transition-colors duration-300"
                             >
                                 Create Character
                             </button>
@@ -78,18 +100,18 @@ function Story() {
                         </div>
                     </div>
                     
-                    <div className="border p-4">
+                    <div className="p-4">
                         <div className="flex justify-between">
                             <div className="flex items-center">
                                 <h2 className="text-3xl font-bold">Chapters</h2>
                                 <button
-                                    onClick={(e) => {ChapterCreate({e, id, setChapters})}}
-                                    className="ml-5 bg-oak text-white p-2 rounded hover:bg-oak-dark transition-colors duration-300"
+                                    onClick={(e) => {ChapterCreate({e, id, setChapters, data: {title: "Title", description: "Description..."}})}}
+                                    className="ml-5 bg-button text-white p-2 rounded hover:bg-button-dark transition-colors duration-300"
                                 >
                                     Create Chapter
                                 </button>
                             </div>
-                            <Link to={`/stories/${id}/tree`} className="bg-oak hover:bg-oak-dark text-white p-2 rounded">
+                            <Link to={`/stories/${id}/tree`} className="bg-button hover:bg-button-dark text-white p-2 rounded">
                                     View Tree
                             </Link>
                         </div>
@@ -104,7 +126,8 @@ function Story() {
                         name = "Story"
                         config={[
                             { "Title": story.title },
-                            { "Description": story.description}
+                            { "Description": story.description},
+                            { "Theme": story.theme}
                         ]}
                         onClose={closePopup}
                         onUpdate={StoryUpdate}

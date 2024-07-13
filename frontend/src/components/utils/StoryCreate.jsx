@@ -1,15 +1,19 @@
 import api from "../../api";
-import CharactersGet from "./CharactersGet";
 
-function StoryCreate({e, title, StoriesGet, setStories}) {
+const StoryCreate = async ({e, title, StoriesGet, setStories}) => {
     e.preventDefault();
-    api.post("/api/stories/", { title })
-        .then((res) => {
-            if (res.status === 201) console.log("Story created!");
-            else alert("Failed to make note.");
-            StoriesGet({setStories});
-        })
-        .catch((err) => alert(err));
+    try {
+        const res = await api.post("/api/stories/", { title });
+        if (res.status === 201) {
+            await StoriesGet({setStories});
+            return res.data;
+        } else {
+            alert("Failed to make story.");
+        }
+    } catch (err) {
+        alert(err);
+    }
+    return null;
 }
 
-export default StoryCreate
+export default StoryCreate;
