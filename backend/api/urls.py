@@ -1,6 +1,6 @@
 from django.urls import path
 from .views.story_views import StoryListCreate, StoryDetail, StoryUpdate, StoryDelete, CharacterCardListCreate, CharacterCardUpdate, CharacterCardDelete, ChapterListCreate, ChapterUpdate, ChapterDelete
-from .views.external_views import update_chapter
+#from .views.external_views import update_chapter
 
 urlpatterns = [
     path('stories/', StoryListCreate.as_view(), name='story-list-create'),
@@ -13,5 +13,5 @@ urlpatterns = [
     path('stories/<int:story_id>/chapters/', ChapterListCreate.as_view(), name='chapter-list-create'),
     path('stories/<int:story_id>/chapters/<int:id>/update/', ChapterUpdate.as_view(), name='chapter-update'),
     path('stories/<int:story_id>/chapters/<int:id>/delete/', ChapterDelete.as_view(), name='chapter-delete'),
-    path('stories/chapters/<int:pk>/', update_chapter, name='update_chapter'),
+    #path('stories/chapters/<int:pk>/', update_chapter, name='update_chapter'),
 ]

@@ -1,3 +1,4 @@
+'''
 from openai import OpenAI
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -45,3 +46,4 @@ def update_chapter(request, pk):
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    '''
