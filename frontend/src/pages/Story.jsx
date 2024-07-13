@@ -8,6 +8,7 @@ import { StoryGet,StoryUpdate, StoryDelete, CharactersGet, CharacterCreate, Chap
 import { PLACEHOLDER_URL } from '../constants';
 import SyncLoader from 'react-spinners/SyncLoader';
 import { useTheme } from '../components/ThemeProvider';
+import { useNavigate } from 'react-router-dom';
 
 
 function Story() {
@@ -17,6 +18,7 @@ function Story() {
     const [characters, setCharacters] = useState([]);
     const [chapters, setChapters] = useState([]);
     const [showPopup, setShowPopup] = useState(false);
+    const navigate = useNavigate(); 
 
     useEffect(() => {
         StoryGet({id, setStory});
@@ -47,9 +49,15 @@ function Story() {
         setShowPopup(true);
     };
 
-    const closePopup = () => {
+    const closePopup = (deleted = false) => {
         setShowPopup(false);
-        StoryGet({id, setStory});
+        if (deleted) {
+            navigate('/');
+        }
+        else {
+            StoryGet({id, setStory});
+        }
+        
     };
 
     if (!story) {
@@ -131,9 +139,10 @@ function Story() {
                         ]}
                         onClose={closePopup}
                         onUpdate={StoryUpdate}
-                        onDelete={() => {StoryDelete({id: id, onClose: closePopup})}}
+                        onDelete={() => {StoryDelete({id: id, onClose: () => closePopup(true)})}}
                         imageChange = {true}
                         bannerChange = {true}
+                        safeDelete = {true}
                     />
                 )}
             </div>

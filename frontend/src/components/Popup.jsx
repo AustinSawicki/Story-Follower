@@ -2,12 +2,15 @@ import { useState } from 'react';
 import ImageUpload from './utils/ImageUpload';
 import { themesDictionary } from '../assets/themes';
 
-function Popup({ ids, name, config, onClose, onUpdate, onDelete, imageChange = false, bannerChange = false}) {
+function Popup({ ids, name, config, onClose, onUpdate, onDelete, imageChange = false, bannerChange = false, safeDelete = false }) {
     const [inputs, setInputs] = useState(config);
     const [image, setImage] = useState(null);
     const [banner, setBanner] = useState(null);
+    const [confirmTitle, setConfirmTitle] = useState('');
+    const [deleteError, setDeleteError] = useState('');
+    const [firstDeleteClick, setFirstDeleteClick] = useState(false);
 
-    const themes = Object.keys(themesDictionary)
+    const themes = Object.keys(themesDictionary);
 
     const formatKey = (key) => {
         return key
@@ -16,9 +19,8 @@ function Popup({ ids, name, config, onClose, onUpdate, onDelete, imageChange = f
             .join(' ');
     };
 
-
     const handleInputChange = (key, value) => {
-        const newInputs = inputs.map(input => 
+        const newInputs = inputs.map(input =>
             input.hasOwnProperty(key) ? { [key]: value } : input
         );
         setInputs(newInputs);
@@ -27,6 +29,7 @@ function Popup({ ids, name, config, onClose, onUpdate, onDelete, imageChange = f
     const handleImageChange = (image) => {
         setImage(image);
     };
+
     const handleBannerChange = (banner) => {
         setBanner(banner);
     };
@@ -36,7 +39,7 @@ function Popup({ ids, name, config, onClose, onUpdate, onDelete, imageChange = f
         const lowerInputs = inputs.map(input => {
             const key = Object.keys(input)[0].toLowerCase();
             const value = Object.values(input)[0];
-            return { [key]: value }
+            return { [key]: value };
         });
 
         const updateData = lowerInputs.reduce((acc, curr) => {
@@ -44,7 +47,6 @@ function Popup({ ids, name, config, onClose, onUpdate, onDelete, imageChange = f
             acc[key] = curr[key];
             return acc;
         }, {});
-        
 
         if (image) {
             await ImageUpload({ url: `/api/stories/${ids[0]}/update/`, name: 'image', image });
@@ -53,32 +55,49 @@ function Popup({ ids, name, config, onClose, onUpdate, onDelete, imageChange = f
             await ImageUpload({ url: `/api/stories/${ids[0]}/update/`, name: 'banner', image: banner });
         }
 
-        onUpdate({ids, onClose, updateData})
-
-    }
-
-    const handleDelete = () => {
-        onDelete()
+        onUpdate({ ids, onClose, updateData });
     };
 
+    const handleDelete = () => {
+        if(safeDelete && !firstDeleteClick) {
+            setFirstDeleteClick(true)
+        }
+        else{
+            if (safeDelete) {
+                if (confirmTitle !== `Delete ${config[0].Title}`) {
+                    setDeleteError('Title does not match.');
+                    return;
+                }
+            }
+            console.log("delete")
+            onDelete();
+        } 
+    };
+
+    const handleKeyDownDelete = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleDelete();
+        }
+    };
 
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-theme-dark p-4 rounded shadow-lg w-1/3">
-                <div className="flex justify-between items-center mb-4"> 
+                <div className="flex justify-between items-center mb-4">
                     <h2 className="flex text-xl font-bold text-center">{`${name} Settings`}</h2>
                     <button onClick={onClose} className="text-gray-700 hover:text-gray-900">&times;</button>
                 </div>
                 <form onSubmit={handleSubmit}>
-                    { bannerChange && (
+                    {bannerChange && (
                         <div className="mb-4">
                             <label className="font-semibold w-1/4 mr-10">Banner: </label>
                             <input type="file" onChange={(e) => handleBannerChange(e.target.files[0])} />
                         </div>
                     )}
-                    { imageChange && (
+                    {imageChange && (
                         <div className="mb-4">
-                            <label className="font-semibold w-1/4 mr-12 ">Image: </label>
+                            <label className="font-semibold w-1/4 mr-12">Image: </label>
                             <input type="file" onChange={(e) => handleImageChange(e.target.files[0])} />
                         </div>
                     )}
@@ -87,10 +106,10 @@ function Popup({ ids, name, config, onClose, onUpdate, onDelete, imageChange = f
                         const value = Object.values(input)[0];
                         return (
                             <div key={index} className="mb-4 flex items-center">
-                                 <label className={`font-semibold mr-2 min-w-[100px]`}>
+                                <label className={`font-semibold mr-2 min-w-[100px]`}>
                                     {formatKey(key)}
                                 </label>
-                                {key.toLowerCase() === "description"? (
+                                {key.toLowerCase() === "description" ? (
                                     <textarea
                                         className="p-1 rounded-md bg-transparent text-sm w-3/4 focus:ring-0 focus:outline-none focus:border-button focus:border-2 shadow-inner-dark custom-scrollbar"
                                         value={value || ""}
@@ -98,7 +117,7 @@ function Popup({ ids, name, config, onClose, onUpdate, onDelete, imageChange = f
                                         onChange={(e) => handleInputChange(key, e.target.value)}
                                         rows="4"
                                     />
-                                ) : key.toLowerCase() === "short_description"? (
+                                ) : key.toLowerCase() === "short_description" ? (
                                     <textarea
                                         className="p-1 rounded-md bg-transparent text-sm w-3/4 focus:ring-0 focus:outline-none focus:border-button focus:border-2 shadow-inner-dark custom-scrollbar"
                                         value={value || ""}
@@ -116,8 +135,7 @@ function Popup({ ids, name, config, onClose, onUpdate, onDelete, imageChange = f
                                             <option key={t} value={t}>{t}</option>
                                         ))}
                                     </select>
-                                ) : key.toLowerCase() === "title" ?
-                                (
+                                ) : key.toLowerCase() === "title" ? (
                                     <input
                                         type="text"
                                         className="p-1 rounded-md bg-transparent w-3/4 focus:ring-0 focus:outline-none focus:border-button focus:border-2 shadow-inner-dark"
@@ -125,8 +143,7 @@ function Popup({ ids, name, config, onClose, onUpdate, onDelete, imageChange = f
                                         maxLength="30"
                                         onChange={(e) => handleInputChange(key, e.target.value)}
                                     />
-                                )
-                                : (
+                                ) : (
                                     <input
                                         type="text"
                                         className="p-1 rounded-md bg-transparent w-3/4 focus:ring-0 focus:outline-none focus:border-button focus:border-2 shadow-inner-dark"
@@ -137,12 +154,31 @@ function Popup({ ids, name, config, onClose, onUpdate, onDelete, imageChange = f
                             </div>
                         );
                     })}
+                    {safeDelete && firstDeleteClick && (
+                        <div className="mb-4 flex flex-col items-center text-red-600">
+                            <label className="font-semibold text-center">
+                                {`CAUTION: Are you sure you want to delete?`}
+                                <br />
+                                {`Enter, 'Delete ${config[0].Title}', to delete:`}
+                            </label>
+                            <input
+                                type="text"
+                                className="p-1 rounded-md bg-transparent focus:ring-0 focus:outline-none focus:border-red-600 focus:border-2 shadow-inner-dark mt-2"
+                                value={confirmTitle}
+                                onChange={(e) => {
+                                    setConfirmTitle(e.target.value);
+                                    setDeleteError('');
+                                }}
+                                onKeyDown={handleKeyDownDelete}
+                            />
+                            {deleteError && <p className="text-red-600">{deleteError}</p>}
+                        </div>
+                    )}
                     <div className="flex justify-between mt-4">
                         <button type="submit" className="bg-button hover:bg-button-dark text-white p-2 rounded mt-4">Save Settings</button>
                         {handleDelete && (
-                            <button type="button" onClick={handleDelete} className="bg-red-500 hover:bg-red-600 text-white p-2 rounded mt-4">Delete</button>
+                            <button type="button" onClick={() => handleDelete()} className="bg-red-500 hover:bg-red-600 text-white p-2 rounded mt-4">Delete</button>
                         )}
-                        
                     </div>
                 </form>
             </div>

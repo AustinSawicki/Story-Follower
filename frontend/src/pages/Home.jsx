@@ -116,7 +116,8 @@ function Home() {
                     config={[{ "Title": selectedStory.title }]}
                     onClose={closePopup}
                     onUpdate={StoryUpdate}
-                    onDelete={() => { StoryDelete({ id: selectedStory.id, onClose: closePopup }) }}
+                    onDelete={() => { StoryDelete({ id: selectedStory.id, onClose: closePopup })}}
+                    safeDelete={true}
                 />
             )}
         </div>
