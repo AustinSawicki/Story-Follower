@@ -1,17 +1,18 @@
-'''
 from openai import OpenAI
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from ..models import Chapter
 from ..serializers.story_serializers import ChapterSerializer
-from django.conf import settings
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
 client = OpenAI(
-  api_key = settings.OPENAI_API_KEY,
-  organization = settings.OPENAI_ORGANIZATION,
-  project = settings.OPENAI_PROJECT,
+  api_key = os.getenv('OPENAI_API_KEY'),
+  organization = os.getenv('OPENAI_ORGANIZATION'),
+  project = os.getenv('OPENAI_PROJECT'),
 )
 
 @api_view(['PUT'])
@@ -46,4 +47,3 @@ def update_chapter(request, pk):
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    '''
