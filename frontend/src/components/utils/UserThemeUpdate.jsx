@@ -1,12 +1,13 @@
 import api from "../../api";
-import { themesDictionary } from "../../assets/themes";
 
-const UserThemeUpdate = async ({newTheme, updateTheme, setTheme}) => {
+const UserThemeUpdate = async ({newTheme, updateThemeExternal, setTheme}) => {
     try {
-      await api.patch('api/user/update-theme/', { theme: newTheme });
-      updateTheme(newTheme)
-      setTheme(themesDictionary[newTheme]);
-    } catch (error) {
+      await api.patch('api/user/update-user-theme/', { theme: newTheme })
+      .then((res) =>{
+        updateThemeExternal();
+        setTheme(newTheme);
+      }) 
+    }catch (error) {
       console.error('Error updating theme:', error);
     }
   };

@@ -1,6 +1,6 @@
 import api from "../../api";
 
-const ImageUpload = async ({url, name, image}) => {
+const ImageUpload = async ({url, name, image, onUpdate = null}) => {
     const formData = new FormData();
     formData.append(`${name}`, image);
     
@@ -10,7 +10,10 @@ const ImageUpload = async ({url, name, image}) => {
         }
     })
     .then((res) => {
-        if (res.status !== 200) {
+        if(res.status === 200 && onUpdate){
+            onUpdate()
+        }
+        else {
             console.log("Failed to update image.");
         }
     })

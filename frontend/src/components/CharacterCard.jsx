@@ -3,8 +3,26 @@ import Settings from './Settings';
 import CharacterPopup from './CharacterPopup';
 import { PLACEHOLDER_URL } from '../constants';
 
-function CharacterCard({ storyId, character, onUpdate }) {
+function CharacterCard({ story, character, onUpdate }) {
     const [showPopup, setShowPopup] = useState(false);
+    const [affiliation, setAffiliation] = useState("")
+    const [borderColor, setBorderColor] = useState("")
+
+    useEffect(() => {
+        if (story && story.affiliations) {
+            const affiliation = story.affiliations.find(affil => affil.id === character.affiliation);
+            if(affiliation){
+                setAffiliation(affiliation.name);
+                setBorderColor(affiliation.color);
+            }
+            else {
+                setAffiliation("");
+                setBorderColor("")
+            }
+            
+        }
+    }, [story, character]);
+    
 
     useEffect(() => {
         if (showPopup) {
@@ -28,7 +46,9 @@ function CharacterCard({ storyId, character, onUpdate }) {
     };
 
     return (
-        <div className="p-4 w-64 h-128 relative bg-theme-dark rounded-xl">
+        <div className={`${borderColor ? "border-2" : ""}  p-4 w-64 h-128 relative bg-theme-dark rounded-xl`}
+             style={{ borderColor: borderColor }}
+        >   
             <div className="absolute inset-x-0 top-0 flex justify-center text-lg">
                  <strong>{character.name}</strong>
             </div>
@@ -41,7 +61,7 @@ function CharacterCard({ storyId, character, onUpdate }) {
                 )}
             </div>
             <div className="flex justify-center text-sm mt--2 mb-3">
-                {character.group}
+                {affiliation}
             </div>
 
             <strong>Description: </strong>
@@ -50,10 +70,9 @@ function CharacterCard({ storyId, character, onUpdate }) {
 
             {showPopup && (
                 <CharacterPopup
-                    storyId={storyId}
+                    story={story}
                     character={character}
                     onClose={closePopup}
-                    onUpdate={onUpdate}
                 />
             )}
         </div>

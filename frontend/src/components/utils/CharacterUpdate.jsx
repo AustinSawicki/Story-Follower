@@ -1,10 +1,13 @@
 import api from "../../api";
 
-function CharacterUpdate({ids, onClose, updateData}) {
+function CharacterUpdate({ids, onClose, updateData, onUpdate = null}) {
     api.patch(`/api/stories/${ids[0]}/characters/${ids[1]}/update/`, updateData)
             .then((res) => {
                 if (res.status === 200) {
                     onClose(); // Close the popup on success
+                    if(onUpdate){
+                        onUpdate();
+                    }
                 } else {
                     console.log('Failed to update character.');
                 }

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from api.views.auth_views import CreateUserView, UserDetailView, CustomTokenObtainPairView, UpdatePasswordView, UpdateUsernameView, UpdateThemeView
+from api.views.auth_views import CreateUserView, UserDetailView, CustomTokenObtainPairView, UpdatePasswordView, UpdateUsernameView, UpdateUserThemeView, ThemeListCreate, ThemeDelete, ThemeDetail, ThemeUpdate
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -11,7 +11,11 @@ urlpatterns = [
     path("api/user/me/", UserDetailView.as_view(), name="user_detail"),
     path("api/user/update-password/", UpdatePasswordView.as_view(), name="update_password"),
     path("api/user/update-username/", UpdateUsernameView.as_view(), name="update_username"),
-    path("api/user/update-theme/", UpdateThemeView.as_view(), name="update_theme"),
+    path("api/user/update-user-theme/", UpdateUserThemeView.as_view(), name="update_user_theme"),
+    path('api/user/themes/', ThemeListCreate.as_view(), name='theme-list-create'),
+    path('api/user/themes/<int:id>/', ThemeDetail.as_view(), name='theme-detail'),
+    path('api/user/themes/<int:id>/update/', ThemeUpdate.as_view(), name='theme-update'),
+    path('api/user/themes/<int:id>/delete/', ThemeDelete.as_view(), name='theme-delete'),
     path("api/token/", CustomTokenObtainPairView.as_view(), name="get_token"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
     path("api-auth/", include("rest_framework.urls")),

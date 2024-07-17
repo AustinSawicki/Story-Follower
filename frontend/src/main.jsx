@@ -7,6 +7,8 @@ import 'react-flow-renderer/dist/style.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <div className='custom-scrollbar'>
+      <App />
+    </div>
   </React.StrictMode>,
 )

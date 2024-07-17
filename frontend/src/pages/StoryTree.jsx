@@ -7,11 +7,15 @@ import ReactFlow, {
     useEdgesState,
     addEdge,
     ReactFlowProvider
-  } from 'react-flow-renderer';
-import api from '../api';
+} from 'react-flow-renderer';
+import CustomNode from '../components/CustomNode';
 import { ChaptersGet, StoryGet, ChapterUpdate, ChapterDelete } from '../components/utils';
 import Popup from '../components/Popup'; 
 import { useTheme } from '../components/ThemeProvider';
+
+const nodeTypes = {
+    customNode: CustomNode,
+};
 
 function StoryTree() {
     const { id } = useParams();
@@ -24,8 +28,8 @@ function StoryTree() {
     const [selectedChapter, setSelectedChapter] = useState(null);
 
     useEffect(() => {
-        StoryGet({id, setStory});
-        ChaptersGet({id, setChapters});
+        StoryGet({ id, setStory });
+        ChaptersGet({ id, setChapters });
     }, [id]);
 
     useEffect(() => {
@@ -42,29 +46,25 @@ function StoryTree() {
 
     const getNodes = () => {
         const nodes = chapters.map((chapter, index) => {
-            let position = { x: index * 200, y: index * 100 };
-            if (index > 0) {
-                const prevChapter = chapters[index - 1];
-                position = { x: (prevChapter.x || 0) + 200, y: (prevChapter.y || 0) + 100 };
+            if(!chapter.x && !chapter.y) {
+                let position = { x: index * 200, y: index * 100 };
+                if (index > 0) {
+                    const prevChapter = chapters[index - 1];
+                    position = { x: (prevChapter.x || 0) + 200, y: (prevChapter.y || 0) + 100 };
+                }
+                chapter.x = position.x
+                chapter.y = position.y
+                ChapterUpdate({ids: [id, chapter.id], updateData: chapter})
             }
             return {
                 id: chapter.id.toString(),
+                type: 'customNode',
                 data: {
-                    label: (
-                        <div className="relative">
-                            <p className="font-bold overflow-hidden text-ellipsis whitespace-nowrap">{chapter.title}</p>
-                            <p>{chapter.short_description}</p>
-                            <button
-                                onClick={() => openPopup(chapter)}
-                                className="absolute top-0 right-0 bg-transparent border-none cursor-pointer text-gray-600 hover:text-gray-800 font-bold"
-                            >
-                                ⋮
-                            </button>
-                        </div>
-                    ),
+                    label: chapter.title,
                     description: chapter.short_description,
+                    onClick: () => openPopup(chapter)
                 },
-                position: { x: chapter.x || position.x, y: chapter.y || position.y },
+                position: { x: chapter.x, y: chapter.y},
             };
         });
 
@@ -88,7 +88,7 @@ function StoryTree() {
     const closePopup = () => {
         setShowPopup(false);
         setSelectedChapter(null);
-        ChaptersGet({id, setChapters});
+        ChaptersGet({ id, setChapters });
     };
 
     const onNodeDragStop = (event, node) => {
@@ -96,17 +96,18 @@ function StoryTree() {
     };
 
     return (
-        <div className="relative h-[600px]">
+        <div className="relative" style={{ height: '80vh' }}>
             <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onNodeDragStop={onNodeDragStop}
-            className="bg-theme-dark"
-            fitView
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onNodeDragStop={onNodeDragStop}
+                className="bg-theme-dark"
+                fitView
+                nodeTypes={nodeTypes}
             >
-                <Controls />
+                <Controls className="bg-button"/>
                 <Background color="#000" gap={16} />
             </ReactFlow>
             {showPopup && selectedChapter && (
@@ -119,7 +120,7 @@ function StoryTree() {
                     ]}
                     onClose={closePopup}
                     onUpdate={ChapterUpdate}
-                    onDelete={ChapterDelete}
+                    onDelete={() => {ChapterDelete({ids: [id, selectedChapter.id], onClose: closePopup})}}
                 />
             )}
         </div>

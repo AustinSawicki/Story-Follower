@@ -15,9 +15,17 @@ import DescriptionGet from "./DescriptionGet";
 import DescriptionUpdate from "./DescriptionUpdate";
 import ImageUpload from "./ImageUpload";
 import UserGet from "./UserGet";
+import UserThemeUpdate from "./UserThemeUpdate";
 import UsernameReset from "./UsernameReset";
 import PasswordReset from "./PasswordReset";
-import UserThemeUpdate from "./UserThemeUpdate";
+import AffiliationCreate from "./AffiliationCreate";
+import AffiliationUpdate from "./AffiliationUpdate";
+import AffiliationDelete from "./AffiliationDelete";
+import ThemeCreate from "./ThemeCreate";
+import ThemeUpdate from "./ThemeUpdate";
+import ThemeDelete from "./ThemeDelete";
+
+
 
 export {StoryGet,
         StoriesGet,
@@ -38,4 +46,10 @@ export {StoryGet,
         UserGet,
         UserThemeUpdate,
         UsernameReset,
-        PasswordReset};
+        PasswordReset,
+        AffiliationCreate,
+        AffiliationUpdate,
+        AffiliationDelete,
+        ThemeCreate,
+        ThemeUpdate,
+        ThemeDelete};

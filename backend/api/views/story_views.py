@@ -1,6 +1,6 @@
 from rest_framework import generics
-from ..models import Story, CharacterCard, Chapter
-from ..serializers.story_serializers import StorySerializer, CharacterCardSerializer, ChapterSerializer
+from ..models import Story, CharacterCard, Chapter, Affiliation
+from ..serializers.story_serializers import StorySerializer, CharacterCardSerializer, ChapterSerializer, AffiliationSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.core.files.storage import default_storage
 
@@ -51,6 +51,39 @@ class StoryDelete(generics.DestroyAPIView):
 
     def get_queryset(self):
         return Story.objects.filter(user=self.request.user)
+
+class AffiliationListCreateView(generics.ListCreateAPIView):
+    serializer_class = AffiliationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        story_id = self.kwargs['story_id']
+        return Affiliation.objects.filter(story__id=story_id, story__user=self.request.user)
+    
+    def perform_create(self, serializer):
+        story_id = self.kwargs['story_id']
+        story = Story.objects.get(id=story_id, user=self.request.user)
+        serializer.save(story=story)
+
+class AffiliationUpdateView(generics.UpdateAPIView):
+    queryset = Affiliation.objects.all()
+    serializer_class = AffiliationSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        story_id = self.kwargs['story_id']
+        return Affiliation.objects.filter(story__id=story_id, story__user=self.request.user)
+
+class AffiliationDeleteView(generics.DestroyAPIView):
+    queryset = Affiliation.objects.all()
+    serializer_class = AffiliationSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        story_id = self.kwargs['story_id']
+        return Affiliation.objects.filter(story__id=story_id, story__user=self.request.user)
 
 class CharacterCardListCreate(generics.ListCreateAPIView):
     serializer_class = CharacterCardSerializer

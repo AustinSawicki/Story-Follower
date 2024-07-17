@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from ..models import CustomUser
+from ..models import CustomUser, Theme
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics, status
 from rest_framework.response import Response
-from ..serializers.auth_serializers import UserSerializer, UpdatePasswordSerializer, UpdateUsernameSerializer, UpdateThemeSerializer
+from ..serializers.auth_serializers import UserSerializer, UpdatePasswordSerializer, UpdateUsernameSerializer, UpdateUserThemeSerializer, ThemeSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 class CreateUserView(generics.CreateAPIView):
@@ -20,8 +20,6 @@ class UserDetailView(generics.RetrieveAPIView):
     def get_object(self):
         return self.request.user
     
-
-
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         # All usernames saved in the database are lowercase
@@ -51,10 +49,44 @@ class UpdateUsernameView(generics.UpdateAPIView):
     def get_object(self):
         return self.request.user
     
-class UpdateThemeView(generics.UpdateAPIView):
+class UpdateUserThemeView(generics.UpdateAPIView):
     queryset = CustomUser.objects.all()
-    serializer_class = UpdateThemeSerializer
+    serializer_class = UpdateUserThemeSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user
+    
+class ThemeListCreate(generics.ListCreateAPIView):
+    serializer_class = ThemeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Theme.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class ThemeDetail(generics.RetrieveAPIView):
+    queryset = Theme.objects.all()
+    serializer_class = ThemeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return Theme.objects.get(pk=self.kwargs['id'], user=self.request.user)
+
+class ThemeUpdate(generics.UpdateAPIView):
+    queryset = Theme.objects.all()
+    serializer_class = ThemeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return Theme.objects.get(pk=self.kwargs['id'], user=self.request.user)
+
+class ThemeDelete(generics.DestroyAPIView):
+    queryset = Theme.objects.all()
+    serializer_class = ThemeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return Theme.objects.get(pk=self.kwargs['id'], user=self.request.user)

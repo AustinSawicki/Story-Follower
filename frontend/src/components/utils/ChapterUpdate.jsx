@@ -1,6 +1,6 @@
 import api from "../../api";
 
-function ChapterUpdate({ ids, onClose = null, updateData }) {
+function ChapterUpdate({ ids, onClose = null, updateData, setLoading = null }) {
     api.patch(`/api/stories/${ids[0]}/chapters/${ids[1]}/update/`, updateData)
         .then((res) => {
             if (res.status === 200) {
@@ -9,6 +9,9 @@ function ChapterUpdate({ ids, onClose = null, updateData }) {
                         if (updateRes.status === 200) {
                             if (onClose) {
                                 onClose(); // Close the popup on success
+                                if (setLoading) {
+                                    setLoading(false);
+                                }
                             }
                         } else {
                             console.log('Failed to run update_chapter.');

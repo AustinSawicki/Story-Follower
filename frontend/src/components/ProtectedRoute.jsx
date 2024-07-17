@@ -26,7 +26,6 @@ function ProtectedRoute({ children }) {
                 setIsAuthorized(false)
             }
         } catch (error) {
-            console.log(error);
             setIsAuthorized(false);
         }
     };

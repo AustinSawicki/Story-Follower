@@ -31,7 +31,8 @@ def update_chapter(request, pk):
                 f"Based on this description, {chapter.description}\n"
                 "Give me a shorter description that summarizes the main points.\n"
                 "It must be shorter than the provided description. I want the\n"
-                "response to only be the shorter description and it must not exceed 125 characters."
+                "response to only be the shorter description and it must not exceed 125 characters.\n"
+                "Be sure to count the characters it must be 125 characters or less."
             )
             print(prompt)
             try:

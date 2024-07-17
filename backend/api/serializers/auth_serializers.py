@@ -1,12 +1,19 @@
-from ..models import CustomUser
+from ..models import CustomUser, Theme
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 
+class ThemeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Theme
+        fields = ['id', 'user', 'name', 'theme_default', 'theme_dark', 'button_default', 'button_dark', 'text_color']
+        read_only_fields = ['id', 'user']
 
 class UserSerializer(serializers.ModelSerializer):
+    themes = ThemeSerializer(many=True, read_only=True)
+
     class Meta:
         model = CustomUser
-        fields = ["id", "username", "password", "theme"]
+        fields = ["id", "username", "password", "themes", "theme"]
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
@@ -39,7 +46,7 @@ class UpdateUsernameSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
     
-class UpdateThemeSerializer(serializers.ModelSerializer):
+class UpdateUserThemeSerializer(serializers.ModelSerializer):
     theme = serializers.CharField()
 
     class Meta:

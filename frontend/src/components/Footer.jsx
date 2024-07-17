@@ -3,7 +3,7 @@ export default function Footer() {
   
     return (
        <footer className=" py-4 shadow-inner">
-        <div className="text-center text-gray-700">
+        <div className="text-center">
           Story Follower &copy; {currentYear}
         </div>
       </footer>

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views.story_views import StoryListCreate, StoryDetail, StoryUpdate, StoryDelete, CharacterCardListCreate, CharacterCardUpdate, CharacterCardDelete, ChapterListCreate, ChapterUpdate, ChapterDelete
+from .views.story_views import StoryListCreate, StoryDetail, StoryUpdate, StoryDelete, CharacterCardListCreate, CharacterCardUpdate, CharacterCardDelete, ChapterListCreate, ChapterUpdate, ChapterDelete, AffiliationListCreateView, AffiliationDeleteView, AffiliationUpdateView
 from .views.external_views import update_chapter
 
 urlpatterns = [
@@ -7,6 +7,9 @@ urlpatterns = [
     path('stories/<int:id>/', StoryDetail.as_view(), name='story-detail'),
     path('stories/<int:id>/update/', StoryUpdate.as_view(), name='story-update'),
     path('stories/<int:id>/delete/', StoryDelete.as_view(), name='story-delete'),
+    path('stories/<int:story_id>/affiliations/', AffiliationListCreateView.as_view(), name='affiliation-list-create'),
+    path('stories/<int:story_id>/affiliations/<int:id>/update/', AffiliationUpdateView.as_view(), name='affiliation-update'),
+    path('stories/<int:story_id>/affiliations/<int:id>/delete/', AffiliationDeleteView.as_view(), name='affiliation-delete'),
     path('stories/<int:story_id>/characters/', CharacterCardListCreate.as_view(), name='character-card-list-create'),
     path('stories/<int:story_id>/characters/<int:id>/update/', CharacterCardUpdate.as_view(), name='character-update'),
     path('stories/<int:story_id>/characters/<int:id>/delete/', CharacterCardDelete.as_view(), name='character-card-delete'),
