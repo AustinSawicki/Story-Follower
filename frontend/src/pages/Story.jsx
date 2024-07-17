@@ -1,23 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Settings from '../components/Settings';
-import CharacterCard from '../components/CharacterCard';
 import Chapter from '../components/Chapter';
+import SortableChapter from '../components/SortableChapter';
 import Popup from '../components/Popup';
-import { UserGet, StoryGet, StoryUpdate, StoryDelete, CharactersGet, CharacterCreate, ChaptersGet, ChapterCreate, CharacterUpdate } from '../components/utils/index';
+import { UserGet, StoryGet, StoryUpdate, StoryDelete, CharactersGet, ChapterCreate, CharacterUpdate, ChaptersGet, ChapterUpdate } from '../components/utils/index';
 import { PLACEHOLDER_URL } from '../constants';
 import SyncLoader from 'react-spinners/SyncLoader';
 import { useTheme } from '../components/ThemeProvider';
+import StoryCharacterDisplay from '../components/StoryCharacterDisplay';
+import { DndContext, closestCenter, DragOverlay } from '@dnd-kit/core';
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
 function Story() {
     const { id } = useParams();
-    const { updateTheme, updateThemeExternal, theme } = useTheme();
+    const { updateThemeExternal, theme } = useTheme();
     const [story, setStory] = useState(null);
     const [characters, setCharacters] = useState([]);
     const [chapters, setChapters] = useState([]);
     const [showPopup, setShowPopup] = useState(false);
-    const [isSortingEnabled, setIsSortingEnabled] = useState(true); // State variable to toggle sorting
     const [user, setUser] = useState({});
+    const [activeId, setActiveId] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -33,7 +38,6 @@ function Story() {
             updateThemeExternal();
             CharactersGet({ id, setCharacters });
             ChaptersGet({ id, setChapters });
-            setIsSortingEnabled(story.sorting_enabled);
         }
     }, [story]);
 
@@ -68,8 +72,6 @@ function Story() {
                     }
                 });
     
-                console.log(charactersToUpdate);
-    
                 if (charactersToUpdate.length > 0) {
                     await Promise.all(charactersToUpdate.map(character => {
                         return CharacterUpdate({ ids: [id, character], updateData: { affiliation: null } });
@@ -80,6 +82,7 @@ function Story() {
         };
     
         updateCharacters();
+
     }, [characters, story]);
 
     const openPopup = () => {
@@ -95,39 +98,58 @@ function Story() {
         }
     };
 
-    const getSortedAffiliations = () => {
-        if (!story || !story.affiliations) return [];
-
-        const affiliationCounts = story.affiliations.map(affiliation => ({
-            ...affiliation,
-            count: characters.filter(character => character.affiliation === affiliation.id).length
-        }));
-
-        // Special group for characters with no affiliation
-        const noAffiliationGroup = {
-            id: null,
-            name: 'No Affiliation',
-            count: characters.filter(character => !character.affiliation).length,
-        };
-
-        return [...affiliationCounts, noAffiliationGroup].sort((a, b) => b.count - a.count);
+    const handleDragStart = (event) => {
+        setActiveId(event.active.id);
     };
 
-    const handleSortToggle = () => {
-        setIsSortingEnabled(!isSortingEnabled);
-        story.sorting_enabled = !isSortingEnabled;
-        StoryUpdate({ ids: [id], updateData: { sorting_enabled: !isSortingEnabled } });
+    const handleDragEnd = async (event) => {
+        const { active, over } = event;
+        setActiveId(null);
+    
+        if (active.id !== over.id) {
+            setChapters((items) => {
+                const oldIndex = items.findIndex(item => item.id === active.id);
+                const newIndex = items.findIndex(item => item.id === over.id);
+    
+                const newItems = arrayMove(items, oldIndex, newIndex);
+    
+                // Swap x and y values of the chapters
+                const oldChapter = newItems[oldIndex];
+                const newChapter = newItems[newIndex];
+    
+                if (oldChapter && newChapter) {
+                    const tempX = oldChapter.x;
+                    const tempY = oldChapter.y;
+    
+                    oldChapter.x = newChapter.x;
+                    oldChapter.y = newChapter.y;
+    
+                    newChapter.x = tempX;
+                    newChapter.y = tempY;
+                }
+    
+                // Update the position locally
+                newItems.forEach((chapter, index) => {
+                    chapter.position = index;
+                });
+    
+                // Update the position on the server if it has changed
+                newItems.forEach(async (chapter, index) => {
+                    await ChapterUpdate({ ids: [id, chapter.id], updateData: { position: index, x: chapter.x, y: chapter.y } });
+                });
+    
+                return newItems;
+            });
+        }
     };
 
     if (!story) {
         return (
             <div className="m-5 flex items-center justify-center">
-                <SyncLoader color="#cd7f4f"/>
+                <SyncLoader color={theme.button_dark}/>
             </div>
         );
     }
-
-    const sortedAffiliations = getSortedAffiliations();
 
     return (
         <div>
@@ -153,73 +175,55 @@ function Story() {
                     </div>
                 </div>
 
-                <div className="mb-4 p-4 rounded-xl bg-theme">
-                    <div className="flex items-center mb-4">
-                        <h2 className="text-2xl md:text-3xl font-bold">Characters</h2>
-                        <button
-                            onClick={(e) => CharacterCreate({ e, id, setCharacters })}
-                            className="ml-5 bg-button text-white p-2 rounded hover:bg-button-dark transition-colors duration-300"
-                        >
-                            Create Character
-                        </button>
-                        <label className="ml-5">
-                            <input
-                                type="checkbox"
-                                checked={isSortingEnabled}
-                                onChange={handleSortToggle}
-                                className="mr-2"
-                            />
-                            Sort by Affiliation
-                        </label>
-                    </div>
-                    <div className="overflow-x-auto whitespace-nowrap mb-4">
-                        {isSortingEnabled ? (
-                            sortedAffiliations.map(affiliation => (
-                                <div key={affiliation.id} className="inline-block mb-4 ml-4">
-                                    {affiliation.count > 0 && <h3 className="text-xl md:text-2xl font-semibold">{affiliation.name}</h3>}
-                                    <div className="inline-flex space-x-4">
-                                        {characters
-                                            .filter(character => character.affiliation === affiliation.id || (!character.affiliation && affiliation.id === null))
-                                            .map(character => (
-                                                <CharacterCard key={character.id} story={story} character={character}
-                                                    onUpdate={() => {
-                                                        StoryGet({ id, setStory });
-                                                    }} />
-                                            ))}
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="inline-flex space-x-4">
-                                {characters.map(character => (
-                                    <CharacterCard key={character.id} story={story} character={character}
-                                        onUpdate={() => {
-                                            StoryGet({ id, setStory });
-                                        }} />
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </div>
+                <StoryCharacterDisplay
+                    story={story}
+                    characters={characters}
+                    setCharacters={setCharacters}
+                    id={id}
+                    setStory={setStory}
+                />
 
                 <div className="p-4">
                     <div className="flex justify-between">
-                        <div className="flex items-center">
-                            <h2 className="text-2xl md:text-3xl font-bold">Chapters</h2>
-                            <button
-                                onClick={(e) => { ChapterCreate({ e, id, setChapters, data: { title: "Title", description: "" } }) }}
-                                className="ml-5 bg-button text-white p-2 rounded hover:bg-button-dark transition-colors duration-300"
-                            >
-                                Create Chapter
-                            </button>
-                        </div>
+                        <h2 className="text-2xl md:text-3xl font-bold">Chapters</h2>
                         <Link to={`/stories/${id}/tree`} className="bg-button hover:bg-button-dark text-white p-2 rounded text-center ml-3">
                             View Tree
                         </Link>
                     </div>
-                    {chapters.map(chapter => (
-                        <Chapter key={chapter.id} storyId={id} chapter={chapter} onUpdate={() => { ChaptersGet({ id, setChapters }) }} />
-                    ))}
+                    <DndContext
+                        collisionDetection={closestCenter}
+                        onDragStart={handleDragStart}
+                        onDragEnd={handleDragEnd}
+                        modifiers={[restrictToVerticalAxis]}
+                    >
+                        <SortableContext
+                            items={chapters.map(chapter => chapter.id)}
+                            strategy={verticalListSortingStrategy}
+                        >
+                            {chapters.map(chapter => (
+                                <SortableChapter
+                                    key={chapter.id}
+                                    storyId={id}
+                                    chapter={chapter}
+                                    onUpdate={() => { ChaptersGet({ id, setChapters }) }}
+                                    activeId={activeId}
+                                />
+                            ))}
+                        </SortableContext>
+                        <DragOverlay>
+                            {activeId ? (
+                                <Chapter chapter={chapters.find(chapter => chapter.id === activeId)} />
+                            ) : null}
+                        </DragOverlay>
+                    </DndContext>
+                    <div className="flex justify-center mt-5">
+                        <button
+                            onClick={(e) => { ChapterCreate({ e, id, setChapters, data: { title: "Title", description: "" } }) }}
+                            className="bg-button text-white p-2 rounded hover:bg-button-dark transition-colors duration-300"
+                        >
+                            Create Chapter
+                        </button>
+                    </div>
                 </div>
                 {showPopup && (
                     <Popup
@@ -246,5 +250,6 @@ function Story() {
         </div>
     );
 }
+
 
 export default Story;

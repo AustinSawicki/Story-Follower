@@ -1,7 +1,7 @@
 import api from "../../api";
 
 function ChapterUpdate({ ids, onClose = null, updateData, setLoading = null }) {
-    api.patch(`/api/stories/${ids[0]}/chapters/${ids[1]}/update/`, updateData)
+    return api.patch(`/api/stories/${ids[0]}/chapters/${ids[1]}/update/`, updateData)
         .then((res) => {
             if (res.status === 200) {
                 api.put(`/api/stories/chapters/${ids[1]}/`, updateData)

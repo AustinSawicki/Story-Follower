@@ -147,7 +147,7 @@ class ChapterUpdate(generics.UpdateAPIView):
 
     def get_queryset(self):
         story_id = self.kwargs['story_id']
-        return Chapter.objects.filter(story__id=story_id, story__user=self.request.user)
+        return Chapter.objects.filter(story__id=story_id, story__user=self.request.user).order_by('position')
 
 class ChapterDelete(generics.DestroyAPIView):
     serializer_class = ChapterSerializer

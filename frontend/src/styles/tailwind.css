@@ -87,3 +87,7 @@ html, body {
   max-width: 100%; /* Ensure it does not exceed the parent container's width */
   display: block; /* Make sure it behaves as a block element */
 }
+
+.drag-handle {
+  cursor: grab;
+}

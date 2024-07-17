@@ -19,13 +19,14 @@ class CharacterCardSerializer(serializers.ModelSerializer):
 class ChapterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chapter
-        fields = ['id', 'title', 'description', 'short_description', 'x', 'y']
+        fields = ['id', 'title', 'description', 'short_description', 'x', 'y', 'position']
         extra_kwargs = {
             'title': {'required': False, 'allow_blank': True},
             'description': {'required': False, 'allow_blank': True},
             'short_description': {'required': False, 'allow_blank': True},
             'x': {'required': False},
             'y': {'required': False},
+            'position': {'required': False},
         }
 
 class StorySerializer(serializers.ModelSerializer):

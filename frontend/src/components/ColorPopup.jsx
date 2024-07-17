@@ -11,7 +11,7 @@ function ColorPopup({ ids, title, itemList, edit, onClose, popupSubmit }) {
     useEffect(() => {
         if (edit) {
             if (title === "Affiliation") {
-                setColor(edit.name);
+                setColor(edit.color);
             } else {
                 setColor(edit.theme_default);
                 setButtonColor(edit.button_default);

@@ -4,7 +4,7 @@ import Popup from './Popup';
 import ChapterDelete from './utils/ChapterDelete';
 import ChapterUpdate from './utils/ChapterUpdate';
 
-function Chapter({ storyId, chapter, onUpdate }) {
+function Chapter({ storyId, chapter, onUpdate, dragListeners }) {
     const [showPopup, setShowPopup] = useState(false);
 
     useEffect(() => {
@@ -30,24 +30,26 @@ function Chapter({ storyId, chapter, onUpdate }) {
 
     return (
         <div className="p-4 w-full relative bg-theme-dark rounded-xl mt-3">
-            <Settings openPopup={openPopup} size={"2xl"}/>
-            <div className="mb-2">
-                <strong>{chapter.title}</strong>
+            <div className="drag-handle" {...dragListeners}>
+                <div className="mb-2">
+                    <strong>{chapter.title}</strong>
+                </div>
+                <div className="mb-2">
+                    <strong>Description:</strong> {chapter.description}
+                </div>
             </div>
-            <div className="mb-2">
-                <strong>Description:</strong> {chapter.description}
-            </div>
+            <Settings openPopup={openPopup} size={"2xl"} />
             {showPopup && (
                 <Popup
                     ids={[storyId, chapter.id]}
-                    name = "Chapter"
+                    name="Chapter"
                     config={[
                         { "Title": chapter.title },
                         { "Description": chapter.description }
                     ]}
                     onClose={closePopup}
                     onUpdate={ChapterUpdate}
-                    onDelete={() => {ChapterDelete({ids: [storyId, chapter.id], onClose: closePopup})}}
+                    onDelete={() => { ChapterDelete({ ids: [storyId, chapter.id], onClose: closePopup }) }}
                 />
             )}
         </div>

@@ -83,8 +83,17 @@ class Chapter(models.Model):
     description = models.TextField()
     short_description = models.CharField(max_length=255)
     x = models.FloatField(default=0.0)  
-    y = models.FloatField(default=0.0) 
+    y = models.FloatField(default=0.0)
+    position = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title
     
+    def save(self, *args, **kwargs):
+        if not self.pk:  # Only set position for new chapters
+            last_chapter = Chapter.objects.filter(story=self.story).order_by('position').last()
+            if last_chapter:
+                self.position = last_chapter.position + 1
+            else:
+                self.position = 0
+        super().save(*args, **kwargs)
