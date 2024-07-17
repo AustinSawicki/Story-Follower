@@ -24,7 +24,7 @@ function CharacterPopup({ story, character, onClose }) {
 
     useEffect(() => {
         if (story?.affiliations) {
-            setAffiliations(story.affiliations);
+            setAffiliations(story.affiliations.sort((a, b) => a.name.localeCompare(b.name)));
         }
     }, [story]);
 
@@ -77,10 +77,10 @@ function CharacterPopup({ story, character, onClose }) {
                 // Update existing affiliation
                 const updatedAffiliations = [...prevAffiliations];
                 updatedAffiliations[existingAffiliationIndex] = affiliation;
-                return updatedAffiliations;
+                return updatedAffiliations.sort((a, b) => a.name.localeCompare(b.name));
             } else {
                 // Add new affiliation
-                return [...prevAffiliations, affiliation];
+                return [...prevAffiliations, affiliation].sort((a, b) => a.name.localeCompare(b.name));
             }
         });
 

@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import Settings from '../components/Settings';
 import CharacterCard from '../components/CharacterCard';
 import Chapter from '../components/Chapter';
 import Popup from '../components/Popup';
-import { UserGet, StoryGet, StoryUpdate, StoryDelete, CharactersGet, CharacterCreate, ChaptersGet, ChapterCreate } from '../components/utils/index';
+import { UserGet, StoryGet, StoryUpdate, StoryDelete, CharactersGet, CharacterCreate, ChaptersGet, ChapterCreate, CharacterUpdate } from '../components/utils/index';
 import { PLACEHOLDER_URL } from '../constants';
 import SyncLoader from 'react-spinners/SyncLoader';
 import { useTheme } from '../components/ThemeProvider';
-import { useNavigate } from 'react-router-dom';
 
 function Story() {
     const { id } = useParams();
@@ -23,8 +22,7 @@ function Story() {
 
     useEffect(() => {
         UserGet({ setUser });
-      }, []);
-
+    }, []);
 
     useEffect(() => {
         StoryGet({ id, setStory });
@@ -39,15 +37,14 @@ function Story() {
         }
     }, [story]);
 
-    // if story's theme is deleted in user settings
     useEffect(() => {
         if(user?.themes && story) {
             if(!user.themes.find(theme => theme.name === story.theme)) {
-                story.theme = user.theme
-                StoryUpdate({ids: [id], story})
+                story.theme = user.theme;
+                StoryUpdate({ ids: [id], updateData: { theme: user.theme } });
             }
         }
-      }, [story]);
+    }, [story]);
 
     useEffect(() => {
         if (showPopup) {
@@ -60,6 +57,30 @@ function Story() {
             document.body.classList.remove('no-scroll');
         };
     }, [showPopup]);
+
+    useEffect(() => {
+        const updateCharacters = async () => {
+            if (characters.length > 0 && story) {
+                let charactersToUpdate = [];
+                characters.map(character => {
+                    if (character.affiliation && !story.affiliations.find(affiliation => affiliation.id === character.affiliation)) {
+                        charactersToUpdate.push(character.id);
+                    }
+                });
+    
+                console.log(charactersToUpdate);
+    
+                if (charactersToUpdate.length > 0) {
+                    await Promise.all(charactersToUpdate.map(character => {
+                        return CharacterUpdate({ ids: [id, character], updateData: { affiliation: null } });
+                    }));
+                    CharactersGet({ id, setCharacters });
+                }
+            }
+        };
+    
+        updateCharacters();
+    }, [characters, story]);
 
     const openPopup = () => {
         setShowPopup(true);
@@ -95,13 +116,13 @@ function Story() {
     const handleSortToggle = () => {
         setIsSortingEnabled(!isSortingEnabled);
         story.sorting_enabled = !isSortingEnabled;
-        StoryUpdate({ ids: [id], updateData: story });
+        StoryUpdate({ ids: [id], updateData: { sorting_enabled: !isSortingEnabled } });
     };
 
     if (!story) {
         return (
             <div className="m-5 flex items-center justify-center">
-                    <SyncLoader color="#cd7f4f"/>
+                <SyncLoader color="#cd7f4f"/>
             </div>
         );
     }
@@ -124,7 +145,7 @@ function Story() {
                     <div className="text-center w-full md:w-1/2 p-4 rounded flex flex-col justify-center items-center ">
                         <h1 className="text-2xl text-5xl truncate font-semibold w-fit description-border rounded-xl mb-2 p-1 ">{story.title}</h1>
                         <textarea
-                            className="w-full font-bold h-40 md:h-80 p-2 text-sm md:text-xl rounded resize-none bg-theme  hover:ring-button-dark"
+                            className="w-full font-bold h-40 md:h-80 p-2 text-sm md:text-xl rounded resize-none bg-theme hover:ring-button-dark"
                             value={story.description || ""}
                             disabled
                             placeholder=""
@@ -210,7 +231,7 @@ function Story() {
                             { "Theme": story.theme }
                         ]}
                         onClose={() => {
-                            closePopup(false)
+                            closePopup(false);
                             UserGet({ setUser });
                         }}
                         onUpdate={StoryUpdate}
@@ -218,7 +239,7 @@ function Story() {
                         imageChange={true}
                         bannerChange={true}
                         safeDelete={true}
-                        user = {user}
+                        user={user}
                     />
                 )}
             </div>

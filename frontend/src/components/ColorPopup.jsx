@@ -26,8 +26,8 @@ function ColorPopup({ ids, title, itemList, edit, onClose, popupSubmit }) {
             return;
         }
 
-        const isDuplicate = itemList.some(item => item.name.toLowerCase() === name.trim().toLowerCase());
-        if (isDuplicate) {
+        const isDuplicate = itemList.some(item => item.name.toLowerCase() === name.trim().toLowerCase() && item.id !== edit?.id);
+        if (isDuplicate ) {
             setErrorMessage(`${title}'s cannot have two of the same name.`);
             return;
         }
@@ -69,6 +69,7 @@ function ColorPopup({ ids, title, itemList, edit, onClose, popupSubmit }) {
                         id="name"
                         className="p-1 rounded-md bg-theme w-3/4 ring-2 ring-button focus:ring-button-dark focus:outline-none shadow-inner-dark"
                         value={name}
+                        maxLength="25"
                         onChange={(e) => { setName(e.target.value); setErrorMessage(''); }}
                         onKeyPress={handleKeyDown}
                         required
