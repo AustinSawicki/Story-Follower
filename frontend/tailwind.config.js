@@ -21,8 +21,9 @@ export default {
       }
     },
     height: {
-      '128': '28rem',
+      '128': '30rem',
       '64': '14rem',
+      '70': '18rem',
       '90': '22rem'
     },
     spacing: {

@@ -28,8 +28,8 @@ html, body {
 
 .text-overflow-ellipsis {
     display: -webkit-box;
-    -webkit-line-clamp: 11; /* Number of lines before truncation */
     -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -74,6 +74,14 @@ html, body {
 
 .truncate {
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%; /* Ensure it does not exceed the parent container's width */
+  display: block; /* Make sure it behaves as a block element */
+}
+
+.truncate2 {
+  white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%; /* Ensure it does not exceed the parent container's width */
