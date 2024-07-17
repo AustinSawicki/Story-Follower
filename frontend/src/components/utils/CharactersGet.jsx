@@ -4,7 +4,8 @@ function CharactersGet({id, setCharacters}) {
     api.get(`/api/stories/${id}/characters/`)
             .then((res) => res.data)
             .then((data) => {
-                setCharacters(data);
+                const sortedCharacters = [...data].sort((a, b) => a.position - b.position);
+                setCharacters(sortedCharacters);
             })
             .catch((err) => alert(err));
 }

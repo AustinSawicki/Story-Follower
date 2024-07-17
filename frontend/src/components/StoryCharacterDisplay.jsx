@@ -1,10 +1,14 @@
 // StoryCharacterDisplay.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import CharacterCard from './CharacterCard';
-import { StoryGet, StoryUpdate, CharactersGet, CharacterCreate } from './utils';
+import { StoryGet, StoryUpdate, CharactersGet, CharacterCreate, CharacterUpdate } from './utils';
+import { DndContext, closestCenter, DragOverlay } from '@dnd-kit/core';
+import { SortableContext, arrayMove, horizontalListSortingStrategy } from '@dnd-kit/sortable';
+import SortableCharacterCard from './SortableCharacterCard';
 
 const StoryCharacterDisplay = ({ story, characters, setCharacters, id, setStory }) => {
-    const [isSortingEnabled, setIsSortingEnabled] = React.useState(true);
+    const [isSortingEnabled, setIsSortingEnabled] = useState(true);
+    const [activeId, setActiveId] = useState(null);
 
     React.useEffect(() => {
         if (story) {
@@ -33,6 +37,30 @@ const StoryCharacterDisplay = ({ story, characters, setCharacters, id, setStory 
         setIsSortingEnabled(!isSortingEnabled);
         story.sorting_enabled = !isSortingEnabled;
         StoryUpdate({ ids: [id], updateData: { sorting_enabled: !isSortingEnabled } });
+    };
+
+    const handleDragStart = (event) => {
+        setActiveId(event.active.id);
+    };
+
+    const handleDragEnd = (event) => {
+        const { active, over } = event;
+        if (active.id !== over.id) {
+            setCharacters((items) => {
+                const oldIndex = items.findIndex(item => item.id === active.id);
+                const newIndex = items.findIndex(item => item.id === over.id);
+
+                const newItems = arrayMove(items, oldIndex, newIndex);
+
+                // Update the position on the server
+                newItems.forEach(async (character, index) => {
+                    await CharacterUpdate({ ids: [id, character.id], updateData: { position: index } });
+                });
+
+                return newItems;
+            });
+        }
+        setActiveId(null);
     };
 
     const sortedAffiliations = getSortedAffiliations();
@@ -66,7 +94,7 @@ const StoryCharacterDisplay = ({ story, characters, setCharacters, id, setStory 
                                 {characters
                                     .filter(character => character.affiliation === affiliation.id || (!character.affiliation && affiliation.id === null))
                                     .map(character => (
-                                        <CharacterCard key={character.id} story={story} character={character}
+                                        <CharacterCard key={character.id} story={story} character={character} isSortingEnabled={isSortingEnabled}
                                             onUpdate={() => {
                                                 StoryGet({ id, setStory });
                                             }} />
@@ -75,14 +103,35 @@ const StoryCharacterDisplay = ({ story, characters, setCharacters, id, setStory 
                         </div>
                     ))
                 ) : (
-                    <div className="inline-flex space-x-4">
-                        {characters.map(character => (
-                            <CharacterCard key={character.id} story={story} character={character}
-                                onUpdate={() => {
-                                    StoryGet({ id, setStory });
-                                }} />
-                        ))}
-                    </div>
+                    <DndContext
+                        collisionDetection={closestCenter}
+                        onDragStart={handleDragStart}
+                        onDragEnd={handleDragEnd}
+                    >
+                        <SortableContext
+                            items={characters.map(character => character.id)}
+                            strategy={horizontalListSortingStrategy}
+                        >
+                            <div className="inline-flex space-x-4">
+                                {characters.map(character => (
+                                    <SortableCharacterCard
+                                        key={character.id}
+                                        story={story}
+                                        character={character}
+                                        onUpdate={() => {
+                                            StoryGet({ id, setStory });
+                                        }}
+                                        isSortingEnabled={isSortingEnabled}
+                                    />
+                                ))}
+                            </div>
+                        </SortableContext>
+                        <DragOverlay>
+                            {activeId ? (
+                                <CharacterCard character={characters.find(character => character.id === activeId)} />
+                            ) : null}
+                        </DragOverlay>
+                    </DndContext>
                 )}
             </div>
         </div>

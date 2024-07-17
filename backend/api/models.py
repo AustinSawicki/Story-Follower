@@ -68,9 +68,19 @@ class CharacterCard(models.Model):
     name = models.CharField(max_length=20)
     description = models.TextField()
     image = models.ImageField(upload_to=character_image_upload_path, blank=True, null=True)
+    position = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        if not self.pk:  # Only set position for new character cards
+            last_character = CharacterCard.objects.filter(story=self.story).order_by('position').last()
+            if last_character:
+                self.position = last_character.position + 1
+            else:
+                self.position = 0
+        super().save(*args, **kwargs)
     
     def delete(self, *args, **kwargs):
         if self.image:

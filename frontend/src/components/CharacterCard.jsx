@@ -3,7 +3,7 @@ import Settings from './Settings';
 import CharacterPopup from './CharacterPopup';
 import { PLACEHOLDER_URL } from '../constants';
 
-function CharacterCard({ story, character, onUpdate }) {
+function CharacterCard({ story, character, onUpdate, dragListeners = null, isSortingEnabled }) {
     const [showPopup, setShowPopup] = useState(false);
     const [affiliation, setAffiliation] = useState("");
     const [borderColor, setBorderColor] = useState("");
@@ -47,28 +47,29 @@ function CharacterCard({ story, character, onUpdate }) {
             className={`${borderColor ? "border-2" : ""} p-4 w-64 h-128 relative bg-theme-dark rounded-xl`}
             style={{ borderColor: borderColor }}
         >
-            <div className="absolute inset-x-0 top-0 flex justify-center text-lg">
-                <strong>{character.name}</strong>
+            <div className={isSortingEnabled ? "" : "drag-handle"} {...(!isSortingEnabled ? dragListeners : {})}>
+                <div className="absolute inset-x-0 top-0 flex justify-center text-lg">
+                    <strong>{character.name}</strong>
+                </div>
+                <div className="border-2 border-button rounded-2xl h-32 ml-12 w-32 flex items-center justify-center mx-auto mt-2">
+                    {character.image ? (
+                        <img src={character.image} alt="Character" className="w-full h-full object-cover rounded-xl" />
+                    ) : (
+                        <img src={`${PLACEHOLDER_URL}placehold-character.jpg`} alt="Character" className="w-full h-full object-cover rounded-xl" />
+                    )}
+                </div>
+                <div className="flex justify-center text-sm mt-2">
+                    {affiliation}
+                </div>
+
+                <div
+                    className="text-sm w-full h-70 p-1 bg-theme-dark rounded-lg overflow-hidden"
+                    style={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 14, whiteSpace: 'normal' }}
+                >
+                    {character.description || ""}
+                </div>
             </div>
             <Settings openPopup={openPopup} size={"2xl"} />
-            <div className="border-2 border-button rounded-2xl h-32 ml-12 w-32 flex items-center justify-center mx-auto mt-2">
-                {character.image ? (
-                    <img src={character.image} alt="Character" className="w-full h-full object-cover rounded-xl" />
-                ) : (
-                    <img src={`${PLACEHOLDER_URL}placehold-character.jpg`} alt="Character" className="w-full h-full object-cover rounded-xl" />
-                )}
-            </div>
-            <div className="flex justify-center text-sm mt-2">
-                {affiliation}
-            </div>
-
-            <div
-                className="text-sm w-full h-70 p-1 bg-theme-dark rounded-lg overflow-hidden"
-                style={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 14, whiteSpace: 'normal' }}
-            >
-                {character.description || ""}
-            </div>
-
             {showPopup && (
                 <CharacterPopup
                     story={story}

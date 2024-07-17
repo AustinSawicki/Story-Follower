@@ -6,7 +6,6 @@ function ChaptersGet({id, setChapters}) {
             .then((data) => {
                 const sortedChapters = [...data].sort((a, b) => a.position - b.position);
                 setChapters(sortedChapters);
-                console.log("OG CHAPTERS",sortedChapters)
             })
             .catch((err) => alert(err));
 }

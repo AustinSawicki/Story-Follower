@@ -9,11 +9,12 @@ class AffiliationSerializer(serializers.ModelSerializer):
 class CharacterCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = CharacterCard
-        fields = ['id', 'affiliation', 'name', 'description', 'image']
+        fields = ['id', 'affiliation', 'name', 'description', 'image', 'position']
         extra_kwargs = {
             'name': {'required': False, 'allow_blank': True},
             'affiliation': {'required': False},
             'description': {'required': False, 'allow_blank': True},
+            'position': {'required': False},
         }
 
 class ChapterSerializer(serializers.ModelSerializer):
