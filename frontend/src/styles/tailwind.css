@@ -36,10 +36,10 @@ html, body {
 
 .description-border {
     text-shadow: 
-    -1px -1px 0 var(--theme-default), /* Top-left shadow */
-    1px -1px 0 var(--theme-default),  /* Top-right shadow */
-    -1px 1px 0 var(--theme-default),  /* Bottom-left shadow */
-    1px 1px 0 var(--theme-default);   /* Bottom-right shadow */
+    -.5px -.5px 0 var(--theme-default), /* Top-left shadow */
+    .5px -.5px 0 var(--theme-default),  /* Top-right shadow */
+    -.5px .5px 0 var(--theme-default),  /* Bottom-left shadow */
+    .5px .5px 0 var(--theme-default);   /* Bottom-right shadow */
 }
 
 .black-border {
