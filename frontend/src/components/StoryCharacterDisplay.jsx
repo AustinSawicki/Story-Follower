@@ -128,7 +128,7 @@ const StoryCharacterDisplay = ({ story, characters, setCharacters, id, setStory 
                         </SortableContext>
                         <DragOverlay>
                             {activeId ? (
-                                <CharacterCard character={characters.find(character => character.id === activeId)} />
+                                <CharacterCard story = {story} character={characters.find(character => character.id === activeId)} />
                             ) : null}
                         </DragOverlay>
                     </DndContext>
