@@ -62,12 +62,11 @@ function CharacterCard({ story, character, onUpdate, dragListeners = null, isSor
                     {affiliation}
                 </div>
 
-                <div
-                    className="text-sm w-full h-70 p-1 bg-theme-dark rounded-lg overflow-hidden"
-                    style={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 14, whiteSpace: 'normal' }}
-                >
-                    {character.description || ""}
+                
+                <div className="mt-2 description-box h-70">
+                    <p>{character.description || ""}</p>
                 </div>
+               
             </div>
             <Settings openPopup={openPopup} size={"2xl"} />
             {showPopup && (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Settings from './Settings';
 import Popup from './Popup';
 import ChapterDelete from './utils/ChapterDelete';
@@ -6,27 +6,17 @@ import ChapterUpdate from './utils/ChapterUpdate';
 
 function Chapter({ storyId, chapter, onUpdate, dragListeners }) {
     const [showPopup, setShowPopup] = useState(false);
+    const textareaRef = useRef(null);
 
     useEffect(() => {
-        if (showPopup) {
-            document.body.classList.add('no-scroll');
-        } else {
-            document.body.classList.remove('no-scroll');
+        if (textareaRef.current) {
+            textareaRef.current.style.height = 'auto';
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
         }
+    }, [chapter.description]);
 
-        return () => {
-            document.body.classList.remove('no-scroll');
-        };
-    }, [showPopup]);
-
-    const openPopup = () => {
-        setShowPopup(true);
-    };
-
-    const closePopup = () => {
-        setShowPopup(false);
-        onUpdate();
-    };
+    const handleOpenPopup = () => setShowPopup(true);
+    const handleClosePopup = () => setShowPopup(false);
 
     return (
         <div className="p-4 w-full relative bg-theme-dark rounded-xl mt-3">
@@ -35,10 +25,15 @@ function Chapter({ storyId, chapter, onUpdate, dragListeners }) {
                     <strong>{chapter.title}</strong>
                 </div>
                 <div className="mb-2">
-                    <strong>Description:</strong> {chapter.description}
+                    <textarea
+                        ref={textareaRef}
+                        className="w-full h-auto text-md rounded resize-none bg-theme-dark"
+                        value={chapter.description || ""}
+                        disabled
+                    />
                 </div>
             </div>
-            <Settings openPopup={openPopup} size={"2xl"} />
+            <Settings openPopup={handleOpenPopup} size={"2xl"} />
             {showPopup && (
                 <Popup
                     ids={[storyId, chapter.id]}
@@ -47,13 +42,13 @@ function Chapter({ storyId, chapter, onUpdate, dragListeners }) {
                         { "Title": chapter.title },
                         { "Description": chapter.description }
                     ]}
-                    onClose={closePopup}
+                    onClose={handleClosePopup}
                     onUpdate={ChapterUpdate}
-                    onDelete={() => { ChapterDelete({ ids: [storyId, chapter.id], onClose: closePopup }) }}
+                    onDelete={() => { ChapterDelete({ ids: [storyId, chapter.id], onClose: handleClosePopup }) }}
                 />
             )}
         </div>
     );
-}
+};
 
 export default Chapter;
