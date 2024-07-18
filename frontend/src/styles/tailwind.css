@@ -46,6 +46,18 @@ html, body {
   text-overflow: ellipsis;
 }
 
+.short-description-box {
+  white-space: normal;
+  word-break: break-word; 
+}
+.short-description-box p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5; /* Number of lines to show */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .description-border {
     text-shadow: 
     -.5px -.5px 0 var(--theme-default), /* Top-left shadow */
