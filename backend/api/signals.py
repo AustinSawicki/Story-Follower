@@ -25,28 +25,5 @@ def create_default_themes(sender, instance, created, **kwargs):
         for theme in default_themes:
             Theme.objects.create(user=instance, **theme)
 
-@receiver(pre_delete, sender=Story)
-def delete_story_images(sender, instance, **kwargs):
-    # Delete story images
-    print("DELETE STORY IMAGES")
-    if instance.image:
-        default_storage.delete(instance.image.name)
-    if instance.banner:
-        default_storage.delete(instance.banner.name)
-    
-    # Delete character images related to the story
-    for character in instance.character_cards.all():
-        if character.image:
-            default_storage.delete(character.image.name)
 
-@receiver(pre_delete, sender=CharacterCard)
-def delete_character_images(sender, instance, **kwargs):
-    print("DELETE CHARACTER IMAGES")
-    if instance.image:
-        default_storage.delete(instance.image.name)
-    
-    # Check if the story folder should be deleted
-    story_folder = os.path.join('media', 'story_images', str(instance.story.id), 'characters')
-    if os.path.exists(story_folder) and not os.listdir(story_folder):
-        shutil.rmtree(story_folder)
         
