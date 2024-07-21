@@ -11,6 +11,9 @@
   --button-dark: #a0522d;
   --text-color: #000000;
   --text-color-inverse: #ffffff;
+
+
+  scrollbar-color: var(--button-default) var(--theme-default);
 }
 
 h1, h2, h3, h4, h5, h6, p, span, div, a {
@@ -21,10 +24,33 @@ body {
   font-family: 'Nanum Myeongjo';
 }
 
-html, body {
-  scrollbar-width: auto; 
-  scrollbar-color: var(--button-default) var(--theme-default); 
+
+/* Webkit Browsers */
+
+*::-webkit-scrollbar {
+    width: auto; /* Width of the vertical scrollbar */
+    height: auto; /* Height of the horizontal scrollbar */
 }
+
+*::-webkit-scrollbar-track {
+    background: var(--theme-default)!important; /* Color of the scrollbar track */
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--button-default)!important; /* Color of the scrollbar thumb/handle */
+    border-radius: 10px; /* Rounded corners of the scrollbar thumb */
+    border: 3px solid var(--theme-default)!important; /* Padding around the scrollbar thumb */
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background-color: var(--button-dark) !important; /* Color of the scrollbar thumb on hover */
+}
+
+*::-webkit-scrollbar-thumb:active {
+    background-color: var(--button-dark)!important; /* Color of the scrollbar thumb on active */
+}
+
+
 
 .text-overflow-ellipsis {
     display: -webkit-box;

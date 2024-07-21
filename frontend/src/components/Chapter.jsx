@@ -15,8 +15,14 @@ function Chapter({ storyId, chapter, onUpdate, dragListeners }) {
         }
     }, [chapter.description]);
 
-    const handleOpenPopup = () => setShowPopup(true);
-    const handleClosePopup = () => setShowPopup(false);
+    const openPopup = () => {
+        setShowPopup(true);
+    };
+
+    const closePopup = () => {
+        setShowPopup(false);
+        onUpdate();
+    };
 
     return (
         <div className="p-4 w-full relative bg-theme-dark rounded-xl mt-3">
@@ -33,7 +39,7 @@ function Chapter({ storyId, chapter, onUpdate, dragListeners }) {
                     />
                 </div>
             </div>
-            <Settings openPopup={handleOpenPopup} size={"2xl"} />
+            <Settings openPopup={openPopup} size={"2xl"} />
             {showPopup && (
                 <Popup
                     ids={[storyId, chapter.id]}
@@ -42,9 +48,9 @@ function Chapter({ storyId, chapter, onUpdate, dragListeners }) {
                         { "Title": chapter.title },
                         { "Description": chapter.description }
                     ]}
-                    onClose={handleClosePopup}
+                    onClose={closePopup}
                     onUpdate={ChapterUpdate}
-                    onDelete={() => { ChapterDelete({ ids: [storyId, chapter.id], onClose: handleClosePopup }) }}
+                    onDelete={() => { ChapterDelete({ ids: [storyId, chapter.id], onClose: closePopup }) }}
                 />
             )}
         </div>

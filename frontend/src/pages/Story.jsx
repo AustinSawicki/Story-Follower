@@ -205,7 +205,7 @@ function Story() {
                                     key={chapter.id}
                                     storyId={id}
                                     chapter={chapter}
-                                    onUpdate={() => { ChaptersGet({ id, setChapters }) }}
+                                    onUpdate={() => { StoryGet({ id, setStory }) }}
                                     activeId={activeId}
                                 />
                             ))}
