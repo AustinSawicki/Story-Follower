@@ -46,7 +46,7 @@ def delete_character_images(sender, instance, **kwargs):
         default_storage.delete(instance.image.name)
     
     # Check if the story folder should be deleted
-    story_folder = os.path.join('static', 'story_images', str(instance.story.id), 'characters')
+    story_folder = os.path.join('media', 'story_images', str(instance.story.id), 'characters')
     if os.path.exists(story_folder) and not os.listdir(story_folder):
         shutil.rmtree(story_folder)
 
