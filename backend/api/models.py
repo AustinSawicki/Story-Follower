@@ -48,10 +48,21 @@ class Story(models.Model):
         is_new = self.pk is None
         if not self.theme:  
             self.theme = self.user.theme  
-        super().save(*args, **kwargs)
         if is_new:
             Affiliation.objects.create(story=self, name='Protagonist', color='#66ff00')
             Affiliation.objects.create(story=self, name='Antagonist', color='#EE4B2B')
+        else:
+            existing_instance = Story.objects.get(pk=self.pk)
+            # Check if the image field is being updated
+            if self.image and existing_instance.image != self.image:
+                if existing_instance.image:
+                    default_storage.delete(existing_instance.image.name)
+            # Check if the banner field is being updated
+            if self.banner and existing_instance.banner != self.banner:
+                if existing_instance.banner:
+                    default_storage.delete(existing_instance.banner.name)
+    
+        super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         if self.image:
@@ -86,6 +97,13 @@ class CharacterCard(models.Model):
                 self.position = last_character.position + 1
             else:
                 self.position = 0
+        else:
+            existing_instance = CharacterCard.objects.get(pk=self.pk)
+            # Check if the image field is being updated
+            if self.image and existing_instance.image != self.image:
+                if existing_instance.image:
+                    default_storage.delete(existing_instance.image.name)
+
         super().save(*args, **kwargs)
     
     def delete(self, *args, **kwargs):
