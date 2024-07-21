@@ -47,12 +47,7 @@ class Story(models.Model):
             Affiliation.objects.create(story=self, name='Protagonist', color='#66ff00')
             Affiliation.objects.create(story=self, name='Antagonist', color='#EE4B2B')
 
-    def delete(self, *args, **kwargs):
-        if self.image:
-            default_storage.delete(self.image.path)
-        if self.banner:
-            default_storage.delete(self.banner.path)
-        super().delete(*args, **kwargs)
+    
 
 class Affiliation(models.Model):
     story = models.ForeignKey(Story, related_name='affiliations', on_delete=models.CASCADE)
@@ -82,10 +77,7 @@ class CharacterCard(models.Model):
                 self.position = 0
         super().save(*args, **kwargs)
     
-    def delete(self, *args, **kwargs):
-        if self.image:
-            default_storage.delete(self.image.path)
-        super().delete(*args, **kwargs)
+    
 
 class Chapter(models.Model):
     story = models.ForeignKey(Story, related_name='chapters', on_delete=models.CASCADE)
