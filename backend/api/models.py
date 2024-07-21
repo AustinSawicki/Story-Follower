@@ -5,6 +5,12 @@ from django.core.files.storage import default_storage
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+def story_image_upload_path(instance, filename):
+    return f'story_images/{instance.id}/cover-images/{filename}'
+
+def story_banner_upload_path(instance, filename):
+    return f'story_images/{instance.id}/banners/{filename}'
+
 def character_image_upload_path(instance, filename):
     return f'story_images/{instance.story.id}/characters/{filename}'
 
@@ -30,8 +36,8 @@ class Story(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='stories', on_delete=models.CASCADE)
     title = models.CharField(max_length=30)
     description = models.TextField(max_length=5000, default="About story...", blank=True)
-    image = models.ImageField(upload_to='story_images/', blank=True, null=True)
-    banner = models.ImageField(upload_to='story_images/banners', blank=True, null=True)
+    image = models.ImageField(upload_to=story_image_upload_path, blank=True, null=True)
+    banner = models.ImageField(upload_to=story_banner_upload_path, blank=True, null=True)
     theme = models.CharField(max_length=100)
     sorting_enabled = models.BooleanField(default=True) 
 

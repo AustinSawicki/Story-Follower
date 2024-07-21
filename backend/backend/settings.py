@@ -133,14 +133,15 @@ else:
     AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME")
     AWS_S3_ENDPOINT_URL = f"https://{AWS_S3_REGION_NAME}.digitaloceanspaces.com"
     AWS_S3_OBJECT_PARAMETERS = {
-        'CacheControl': 'max-age=8640'
+        'CacheControl': 'max-age=86400',
     }
     AWS_DEFAULT_ACL = "public-read"
-    AWS_LOCATION = "static"
-    STORAGES = { 
-    "default": {"BACKEND": "storages.backends.s3.S3Storage",},
-    "staticfiles": {"BACKEND": "storages.backends.s3.S3Storage"}
-}
+
+    STATICFILES_STORAGE = 'backend.custom_storages.StaticStorage'
+    DEFAULT_FILE_STORAGE = 'backend.custom_storages.MediaStorage'
+
+    STATIC_URL = f'{AWS_S3_ENDPOINT_URL}/static/'
+    MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/media/'
 
 
 AUTH_USER_MODEL = 'api.CustomUser'
