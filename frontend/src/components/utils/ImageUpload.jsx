@@ -11,13 +11,15 @@ const ImageUpload = async ({url, name, image, onUpdate = null}) => {
     })
     .then((res) => {
         if(res.status === 200 && onUpdate){
-            onUpdate()
+            if(onUpdate){
+                onUpdate()
+            }  
         }
         else {
             console.log("Failed to update image.");
         }
     })
-    .catch((err) => alert(err));
+    .catch((err) => console.log(err));
 }
 
 export default ImageUpload;

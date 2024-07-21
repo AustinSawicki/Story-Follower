@@ -94,7 +94,7 @@ function Popup({ ids, name, config, onClose, onUpdate, onDelete, imageChange = f
             if (banner) {
                 await ImageUpload({ url: `/api/stories/${ids[0]}/update/`, name: 'banner', image: banner });
             }
-            await onUpdate({ ids, onClose, updateData, setLoading });
+            onUpdate({ ids, onClose, updateData, setLoading });
         } catch {
             console.alert("Could not save.");
         }

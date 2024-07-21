@@ -2,7 +2,6 @@ import { RiFileSettingsFill } from "react-icons/ri";
 
 function Settings({openPopup, size}) {
     const handleSettingsClick = (e) => {
-        console.log("CLICKING")
         e.stopPropagation();
         openPopup();
     };
