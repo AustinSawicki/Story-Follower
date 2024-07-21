@@ -7,7 +7,7 @@ const CustomNode = ({ data }) => {
     return (
         <div
             className="bg-theme p-2 rounded border-2 border-button relative"
-            style={{ width: '200px', height: '200px' }}
+            style={{ width: '250px', height: '220px' }}
         >
             <p className="font-bold overflow-hidden text-ellipsis whitespace-nowrap text-center">
                 {data.label}
