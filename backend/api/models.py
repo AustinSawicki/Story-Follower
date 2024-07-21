@@ -88,12 +88,6 @@ class CharacterCard(models.Model):
                 self.position = last_character.position + 1
             else:
                 self.position = 0
-        else:
-            existing_instance = CharacterCard.objects.get(pk=self.pk)
-            # Check if the image field is being updated
-            if self.image and existing_instance.image != self.image:
-                if existing_instance.image:
-                    default_storage.delete(existing_instance.image.name)
 
         super().save(*args, **kwargs)
     
