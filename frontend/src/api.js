@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ACCESS_TOKEN } from "./constants";
 
-const apiUrl = "https://story-follower-i9ihy.ondigitalocean.app/";
+const apiUrl = "https://story-follower-ko54b.ondigitalocean.app/";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : apiUrl,
