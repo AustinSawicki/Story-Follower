@@ -6,12 +6,12 @@ import ChapterUpdate from './utils/ChapterUpdate';
 
 function Chapter({ storyId, chapter, onUpdate, dragListeners }) {
     const [showPopup, setShowPopup] = useState(false);
-    const textareaRef = useRef(null);
+    const textRef = useRef(null);
 
     useEffect(() => {
-        if (textareaRef.current) {
-            textareaRef.current.style.height = 'auto';
-            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+        if (textRef.current) {
+            textRef.current.style.height = 'auto';
+            textRef.current.style.height = `${textRef.current.scrollHeight}px`;
         }
     }, [chapter.description]);
 
@@ -31,12 +31,12 @@ function Chapter({ storyId, chapter, onUpdate, dragListeners }) {
                     <strong>{chapter.title}</strong>
                 </div>
                 <div className="mb-2">
-                    <textarea
-                        ref={textareaRef}
-                        className="w-full h-auto text-md rounded resize-none bg-theme-dark"
-                        value={chapter.description || ""}
-                        disabled
-                    />
+                    <p
+                        ref={textRef}
+                        className="w-full h-auto text-md rounded bg-theme-dark description-box"
+                    >
+                        {chapter.description || ""}
+                    </p>
                 </div>
             </div>
             <Settings openPopup={openPopup} size={"2xl"} />

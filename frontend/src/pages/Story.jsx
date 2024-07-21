@@ -167,9 +167,9 @@ function Story() {
                     <div className="text-center w-full md:w-1/2 p-4 rounded flex flex-col justify-center items-center ">
                         <h1 className="text-2xl text-5xl truncate font-semibold w-fit description-border rounded-xl mb-2 p-1 ">{story.title}</h1>
                         <textarea
-                            className="w-full font-bold h-40 md:h-80 p-2 text-sm md:text-xl rounded resize-none bg-theme hover:ring-button-dark"
+                            className="w-full font-bold h-40 md:h-80 p-2 text-sm md:text-xl rounded resize-none bg-theme focus:outline-none"
                             value={story.description || ""}
-                            disabled
+                            readonly
                             placeholder=""
                         />
                     </div>
