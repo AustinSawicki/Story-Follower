@@ -169,7 +169,7 @@ function Story() {
                         <textarea
                             className="w-full font-bold h-40 md:h-80 p-2 text-sm md:text-xl rounded resize-none bg-theme focus:outline-none"
                             value={story.description || ""}
-                            readonly
+                            readOnly
                             placeholder=""
                         />
                     </div>
@@ -232,6 +232,7 @@ function Story() {
                         config={[
                             { "Title": story.title },
                             { "Description": story.description },
+                            { "Rating": story.rating },
                             { "Theme": story.theme }
                         ]}
                         onClose={() => {

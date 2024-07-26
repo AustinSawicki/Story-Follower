@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ["id", "username", "password", "themes", "theme"]
+        fields = ["id", "username", "password", "themes", "theme", "sort_option"]
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
@@ -55,5 +55,17 @@ class UpdateUserThemeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.theme = validated_data['theme']
+        instance.save()
+        return instance
+    
+class UpdateUserSortOptionSerializer(serializers.ModelSerializer):
+    sort_option = serializers.CharField()
+
+    class Meta:
+        model = CustomUser
+        fields = ('sort_option',)
+
+    def update(self, instance, validated_data):
+        instance.sort_option = validated_data['sort_option']
         instance.save()
         return instance

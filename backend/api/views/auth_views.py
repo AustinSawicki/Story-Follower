@@ -3,7 +3,7 @@ from ..models import CustomUser, Theme
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics, status
 from rest_framework.response import Response
-from ..serializers.auth_serializers import UserSerializer, UpdatePasswordSerializer, UpdateUsernameSerializer, UpdateUserThemeSerializer, ThemeSerializer
+from ..serializers.auth_serializers import UserSerializer, UpdatePasswordSerializer, UpdateUsernameSerializer, UpdateUserThemeSerializer, UpdateUserSortOptionSerializer, ThemeSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 class CreateUserView(generics.CreateAPIView):
@@ -52,6 +52,14 @@ class UpdateUsernameView(generics.UpdateAPIView):
 class UpdateUserThemeView(generics.UpdateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UpdateUserThemeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+    
+class UpdateUserSortOptionView(generics.UpdateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UpdateUserSortOptionSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):

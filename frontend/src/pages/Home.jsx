@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Popup from "../components/Popup";
-import { StoriesGet, StoryCreate, UserGet } from "../components/utils";
+import { StoriesGet, StoryCreate, UserGet, UserSortOptionUpdate } from "../components/utils";
 import StoryUpdate from "../components/utils/StoryUpdate";
 import StoryDelete from "../components/utils/StoryDelete";
 import { useTheme } from '../components/ThemeProvider';
@@ -16,6 +16,7 @@ function Home() {
     const [groupedStories, setGroupedStories] = useState(null);
     const [chunkedGroupedStories, setChunkedGroupedStories] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [sortOption, setSortOption] = useState("alphabetical"); // Add state for sorting option
     const containerRef = useRef(null);
 
     useEffect(() => {
@@ -24,31 +25,47 @@ function Home() {
     }, []);
 
     useEffect(() => {
-        if (user && user.theme) {
-            updateTheme(user.theme);
+        if (user) {
+            if (user.theme) {
+                updateTheme(user.theme);
+            }
+            if (user.sort_option) {
+                setSortOption(user.sort_option)
+            }
         }
     }, [user]);
 
     useEffect(() => {
         if (stories.length > 0) {
-            const groupedStories = stories
-                .sort((a, b) => a.title.localeCompare(b.title))
-                .reduce((groups, story) => {
-                    const firstChar = story.title[0].toUpperCase();
-                    const letter = firstChar.match(/\p{L}/u) ? firstChar : '#'; // Check if it's a letter in any language, else use '#'
-                    if (!groups[letter]) {
-                        groups[letter] = [];
+            if (sortOption === "alphabetical") {
+                const groupedStories = stories
+                    .sort((a, b) => a.title.localeCompare(b.title))
+                    .reduce((groups, story) => {
+                        const firstChar = story.title[0].toUpperCase();
+                        const letter = firstChar.match(/\p{L}/u) ? firstChar : '#'; // Check if it's a letter in any language, else use '#'
+                        if (!groups[letter]) {
+                            groups[letter] = [];
+                        }
+                        groups[letter].push(story);
+                        groups[letter].sort((a, b) => b.title.length - a.title.length); // Sort by length of title
+                        return groups;
+                    }, {});
+                setGroupedStories(groupedStories);
+            } else if (sortOption === "rating") {
+                const groupedByRating = stories.reduce((groups, story) => {
+                    const rating = story.rating !== null ? Math.floor(story.rating) : "No Rating";
+                    if (!groups[rating]) {
+                        groups[rating] = [];
                     }
-                    groups[letter].push(story);
-                    groups[letter].sort((a, b) => b.title.length - a.title.length); // Sort by length of title
+                    groups[rating].push(story);
                     return groups;
                 }, {});
-
-            setGroupedStories(groupedStories);
+                setGroupedStories(groupedByRating);
+            }
         } else {
             setGroupedStories({});
         }
-    }, [stories]);
+    }, [stories, sortOption]);
 
     useEffect(() => {
         if (groupedStories && Object.keys(groupedStories).length > 0) {
@@ -88,6 +105,11 @@ function Home() {
         return chunked;
     };
 
+    const handleSortOptionChange = (option) => {
+        UserSortOptionUpdate({option, setSortOption});
+
+    };
+
     if (!user || !stories || groupedStories === null || chunkedGroupedStories === null) {
         return (
             <div className="m-5 flex items-center justify-center">
@@ -110,6 +132,26 @@ function Home() {
                     Create Story
                 </button>
             </div>
+            <div className="flex items-center mb-4">
+                <label className="flex items-center mr-4">
+                    <input
+                        type="checkbox"
+                        checked={sortOption === "alphabetical"}
+                        onChange={() => handleSortOptionChange("alphabetical")}
+                        className="form-checkbox accent-button"
+                    />
+                    <span className="ml-2">Alphabetical Sort</span>
+                </label>
+                <label className="flex items-center">
+                    <input
+                        type="checkbox"
+                        checked={sortOption === "rating"}
+                        onChange={() => handleSortOptionChange("rating")}
+                        className="form-checkbox accent-button"
+                    />
+                    <span className="ml-2">Rating Sort</span>
+                </label>
+            </div>
 
             {showPopup && selectedStory && (
                 <Popup
@@ -122,28 +164,30 @@ function Home() {
                     safeDelete={true}
                 />
             )}
-                <div className="flex flex-wrap gap-20">
-                    {Object.keys(chunkedGroupedStories).map(letter => (
-                        chunkedGroupedStories[letter].map((group, index) => (
-                            <div key={group.title} className="group m-4">
-                                <h3 className="text-2xl font-semibold">{group.title}</h3>
-                                <ul className="mb-4">
-                                    {group.stories.map(story => (
-                                        <li key={story.id} className="mb-2 flex flex-center text-center bg-button hover:bg-button-dark rounded-md w-fit p-1">
-                                            <Link className="text-white p-1" to={`/stories/${story.id}`}>{story.title}</Link>
-                                            <button onClick={() => openPopup(story)} className="text-white hover:text-button">⋮</button>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        ))
-                    ))}
-                    {isLoading && (
-                        <div className="m-5 flex items-center justify-center">
-                            <SyncLoader color={theme.button_default} />
+            <div className="flex flex-wrap gap-20">
+                {Object.keys(chunkedGroupedStories).map(letter => (
+                    chunkedGroupedStories[letter].map((group, index) => (
+                        <div key={group.title} className="group m-4">
+                            <h3 className="text-2xl font-semibold">{group.title}</h3>
+                            <ul className="mb-4">
+                                {group.stories.map(story => (
+                                    <li key={story.id} className="mb-2 flex items-center text-center bg-button hover:bg-button-dark rounded-md w-fit p-1">
+                                        <Link className="text-white p-1" to={`/stories/${story.id}`}>
+                                            {story.title} {sortOption === "rating" && story.rating !== null ? `(${story.rating.toFixed(1)})` : ""}
+                                        </Link>
+                                        <button onClick={() => openPopup(story)} className="text-white hover:text-button">⋮</button>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
-                    )}
-                </div>
+                    ))
+                ))}
+                {isLoading && (
+                    <div className="m-5 flex items-center justify-center">
+                        <SyncLoader color={theme.button_default} />
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

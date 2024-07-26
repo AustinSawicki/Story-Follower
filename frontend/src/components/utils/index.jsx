@@ -16,6 +16,7 @@ import DescriptionUpdate from "./DescriptionUpdate";
 import ImageUpload from "./ImageUpload";
 import UserGet from "./UserGet";
 import UserThemeUpdate from "./UserThemeUpdate";
+import UserSortOptionUpdate from "./UserSortOptionUpdate";
 import UsernameReset from "./UsernameReset";
 import PasswordReset from "./PasswordReset";
 import AffiliationCreate from "./AffiliationCreate";
@@ -45,6 +46,7 @@ export {StoryGet,
         ImageUpload ,
         UserGet,
         UserThemeUpdate,
+        UserSortOptionUpdate,
         UsernameReset,
         PasswordReset,
         AffiliationCreate,

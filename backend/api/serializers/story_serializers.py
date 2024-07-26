@@ -37,11 +37,12 @@ class StorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Story
-        fields = ['id', 'title', 'description', 'character_cards', 'chapters', 'image', 'banner', 'theme', 'affiliations', 'sorting_enabled']
+        fields = ['id', 'title', 'description', 'character_cards', 'chapters', 'image', 'banner', 'theme', 'affiliations','rating', 'sorting_enabled']
         extra_kwargs = {
             'title': {'required': True},
             'description': {'required': False},
             'theme': {'required': False},
+            'rating': {'required': False},
             'affiliations': {'read_only': True},
             'character_cards': {'read_only': True},
             'chapters': {'read_only': True},

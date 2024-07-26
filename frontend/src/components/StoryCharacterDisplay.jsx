@@ -80,7 +80,7 @@ const StoryCharacterDisplay = ({ story, characters, setCharacters, id, setStory 
                         type="checkbox"
                         checked={isSortingEnabled}
                         onChange={handleSortToggle}
-                        className="mr-2"
+                        className="mr-2 accent-button"
                     />
                     Sort by Affiliation
                 </label>
