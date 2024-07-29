@@ -218,7 +218,6 @@ function CharacterPopup({ story, character, onClose }) {
                             className="p-1 bg-theme w-full resize-none h-80 focus:ring-0 focus:outline-none border-2 border-button focus:border-button-dark shadow-inner-dark custom-scrollbar"
                             value={inputs.description}
                             onChange={handleInputChange}
-                            onKeyPress={handleKeyPress}
                             rows="4"
                             placeholder='Description...'
                             maxLength={1000}
