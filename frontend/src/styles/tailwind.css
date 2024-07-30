@@ -61,7 +61,7 @@ body {
 }
 
 .description-box {
-  white-space: normal;
+  white-space: pre-wrap;
   word-break: break-word; 
 }
 .description-box p {
@@ -73,7 +73,7 @@ body {
 }
 
 .short-description-box {
-  white-space: normal;
+  white-space: pre-wrap;
   word-break: break-word; 
 }
 .short-description-box p {
