@@ -51,6 +51,7 @@ function Chapter({ storyId, chapter, onUpdate, dragListeners }) {
                     onClose={closePopup}
                     onUpdate={ChapterUpdate}
                     onDelete={() => { ChapterDelete({ ids: [storyId, chapter.id], onClose: closePopup }) }}
+                    safeDelete={true}
                 />
             )}
         </div>

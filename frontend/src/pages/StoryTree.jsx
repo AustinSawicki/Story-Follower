@@ -121,6 +121,7 @@ function StoryTree() {
                     onClose={closePopup}
                     onUpdate={ChapterUpdate}
                     onDelete={() => {ChapterDelete({ids: [id, selectedChapter.id], onClose: closePopup})}}
+                    safeDelete={true}
                 />
             )}
         </div>

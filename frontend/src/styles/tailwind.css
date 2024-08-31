@@ -79,7 +79,7 @@ body {
 .short-description-box p {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 7; /* Number of lines to show */
+  -webkit-line-clamp: 9; /* Number of lines to show */
   overflow: hidden;
   text-overflow: ellipsis;
 }
